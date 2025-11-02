@@ -90,7 +90,7 @@ export default function Restaurant() {
 
       <div className="restaurant-header">
         <img
-          src={`${process.env.REACT_APP_API_URL}${rest.image}`}
+          src={`${process.env.REACT_APP_API_URL || "http://localhost:5001"}${rest.image}`}
           alt={rest.name}
           className="restaurant-banner"
         />

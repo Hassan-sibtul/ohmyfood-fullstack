@@ -11,14 +11,20 @@ app.use(cors());
 // Serve images from a public folder (for development)
 app.use("/static", express.static(path.join(__dirname, "public")));
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("Mongo error", err));
+// Connect to MongoDB (gracefully handle missing MONGO_URI in local dev)
+if (!process.env.MONGO_URI) {
+  console.warn(
+    "⚠️  MONGO_URI not set. The server will start, but database operations will fail. Add MONGO_URI to your .env."
+  );
+} else {
+  mongoose
+    .connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(() => console.log("MongoDB connected"))
+    .catch((err) => console.error("Mongo error", err));
+}
 
 // Routes
 const authRoutes = require("./routes/auth");

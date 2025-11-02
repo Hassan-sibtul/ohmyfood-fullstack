@@ -77,7 +77,7 @@ export default function Navbar() {
       <div className="navbar-left">
         <Link to="/" className="logo-link">
           <img
-            src={`${process.env.REACT_APP_API_URL}/static/logo/ohmyfood.png`}
+            src={`${process.env.REACT_APP_API_URL || "http://localhost:5001"}/static/logo/ohmyfood.png`}
             alt="OhMyFood"
             className="logo"
             style={{ height: "40px" }}

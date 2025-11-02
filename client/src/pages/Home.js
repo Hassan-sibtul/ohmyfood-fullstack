@@ -100,7 +100,7 @@ export default function Home() {
           {filtered.map((rest) => (
             <div className="restaurant-card" key={rest._id}>
               <img
-                src={`${process.env.REACT_APP_API_URL}${rest.image}`}
+                src={`${process.env.REACT_APP_API_URL || "http://localhost:5001"}${rest.image}`}
                 alt={rest.name}
               />
               <h3>{rest.name}</h3>
