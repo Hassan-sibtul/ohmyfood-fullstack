@@ -1,0 +1,909 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  color: #222;
+}
+a {
+  color: #0b6efd;
+  text-decoration: none;
+}
+input,
+button {
+  padding: 8px;
+  margin-top: 6px;
+}
+button {
+  cursor: pointer;
+}
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  padding: 20px;
+}
+
+.restaurant-card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.restaurant-card:hover {
+  transform: translateY(-4px);
+}
+
+.restaurant-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.restaurant-card h3 {
+  margin: 12px;
+  font-size: 1.2rem;
+}
+
+.restaurant-card p {
+  margin: 0 12px 12px;
+  color: #666;
+}
+
+.view-menu {
+  display: inline-block;
+  margin: 0 12px 16px;
+  padding: 6px 12px;
+  background: #0070f3;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.view-menu:hover {
+  background: #0059c1;
+}
+/* Navbar style */
+/* Navbar styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-bottom: 1px solid #eee;
+  padding: 10px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #0070f3;
+}
+
+.nav-user {
+  font-weight: 600;
+  color: #444;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(to right, #ff6a00, #ee0979);
+  color: white;
+}
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+.hero-btn {
+  background: white;
+  color: #ee0979;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.2s;
+}
+.hero-btn:hover {
+  background: #f7f7f7;
+}
+
+/* Search Bar */
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+.search-bar {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 1rem;
+}
+
+/* Restaurant Section */
+.restaurants-section {
+  padding: 20px;
+}
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+.restaurant-card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+.restaurant-card:hover {
+  transform: translateY(-4px);
+}
+.restaurant-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+.restaurant-card h3 {
+  margin: 12px;
+  font-size: 1.2rem;
+}
+.restaurant-card p {
+  margin: 0 12px 12px;
+  color: #666;
+}
+.view-menu {
+  display: inline-block;
+  margin: 0 12px 16px;
+  padding: 6px 12px;
+  background: #0070f3;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.view-menu:hover {
+  background: #0059c1;
+}
+
+/* Footer */
+.footer {
+  margin-top: 40px;
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #eee;
+  color: #666;
+  font-size: 0.9rem;
+}
+.footer a {
+  margin-left: 10px;
+  color: #0070f3;
+  text-decoration: none;
+}
+.footer a:hover {
+  text-decoration: underline;
+}
+/* Categories Section */
+.categories {
+  padding: 40px 20px;
+  text-align: center;
+}
+.category-grid {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+.category-grid button {
+  background: #f7f7f7;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.category-grid button:hover {
+  background: #0070f3;
+  color: white;
+}
+
+/* How it Works Section */
+.how-it-works {
+  padding: 50px 20px;
+  text-align: center;
+  background: #fafafa;
+}
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.step-card {
+  background: white;
+  border: 1px solid #eee;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-size: 1.1rem;
+  font-weight: 500;
+  width: 220px;
+  transition: transform 0.2s ease;
+}
+.step-card:hover {
+  transform: translateY(-5px);
+}
+.category-grid {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.category-grid button {
+  background: #f7f7f7;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.category-grid button:hover {
+  background: #0070f3;
+  color: white;
+}
+.active-category {
+  background: #0070f3 !important;
+  color: white !important;
+}
+/* Restaurant Page */
+.restaurant-page {
+  padding: 20px;
+}
+
+.restaurant-header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.restaurant-banner {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.restaurant-info {
+  margin-top: 15px;
+}
+
+.restaurant-info h1 {
+  font-size: 2rem;
+  margin: 10px 0;
+}
+
+.restaurant-info p {
+  color: #555;
+}
+
+/* Menu Grid */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.menu-card {
+  border: 1px solid #eee;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.menu-card h4 {
+  margin: 0 0 5px;
+}
+
+.menu-card p {
+  flex-grow: 1;
+  color: #666;
+}
+
+.price {
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.add-btn {
+  background: #ff385c;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.add-btn:hover {
+  background: #e6004c;
+}
+.toast {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  animation: fadeInOut 2s ease forwards;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+.cart-page {
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #eee;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.cart-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-controls button {
+  border: none;
+  background: #f0f0f0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cart-controls button:hover {
+  background: #ddd;
+}
+
+.remove-btn {
+  background: #ff5252 !important;
+  color: white;
+}
+
+.cart-total {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.checkout-btn {
+  background: #ff385c;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.checkout-btn:hover {
+  background: #e6004c;
+}
+/* Cart badge */
+/* Cart icon and badge */
+.cart-link {
+  position: relative;
+  display: inline-block;
+  font-size: 1.6rem; /* make icon large enough */
+  color: #333;
+  text-decoration: none;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background: #ff385c;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 6px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+.logout-btn {
+  margin-left: 12px;
+  padding: 6px 12px;
+  border: none;
+  background: #ff385c;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #e03352;
+}
+
+.cart-icon {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -12px;
+  background: #ff385c;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+.restaurant-footer {
+  margin-top: 40px;
+  text-align: center;
+  padding: 20px;
+}
+
+.btn-secondary {
+  background: #f1f1f1;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #ddd;
+}
+
+/* Check out Page */
+.checkout-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.checkout-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.address-form {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.address-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #444;
+}
+
+.address-form input {
+  margin-top: 5px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.checkout-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-secondary {
+  background: #f3f3f3;
+  border: 1px solid #ccc;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #e5e5e5;
+}
+
+.btn-primary {
+  background: #ff3366;
+  border: none;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background: #e62e5c;
+}
+
+/* Receipt page */
+.order-receipt {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.order-receipt h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.address-summary,
+.cart-summary {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.address-summary h3,
+.cart-summary h3 {
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+}
+
+.summary-total {
+  border-top: 2px solid #ddd;
+  padding-top: 0.75rem;
+  margin-top: 1rem;
+  text-align: right;
+  font-size: 1.1rem;
+}
+
+.summary-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+/* Payment page */
+.payment-container {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.payment-container h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.payment-form {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.payment-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+}
+
+.payment-form input {
+  margin-top: 5px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.payment-row {
+  display: flex;
+  gap: 15px;
+}
+
+.order-total {
+  text-align: right;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.payment-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Profile orders page */
+.profile-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.order-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #333;
+}
+
+.order-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  background: #e0f7e9;
+  color: #1d7a3a;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.order-total,
+.order-date {
+  margin: 0.25rem 0;
+  color: #444;
+}
+
+.order-items ul {
+  list-style: disc inside;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  color: #555;
+}
+
+.order-address {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.empty-text,
+.loading-text {
+  color: #666;
+  font-style: italic;
+}
+/* Order Confirmation Page */
+.order-confirmation {
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.order-confirmation h2 {
+  color: #1d7a3a;
+  margin-bottom: 1.5rem;
+}
+
+.order-details {
+  margin: 1.5rem 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.order-details strong {
+  color: #333;
+}
+
+.order-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: #1d7a3a;
+  color: white;
+}
+
+.btn-secondary {
+  background: #f0f0f0;
+  color: #333;
+}
+/* Admin Orders page */
+.admin-orders {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: left;
+  vertical-align: top;
+}
+
+.orders-table th {
+  background: #f5f5f5;
+}
+
+.status {
+  font-weight: bold;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+}
+
+.status.paid {
+  background: #e0f7e9;
+  color: #1d7a3a;
+}
+
+.status.preparing {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status.delivered {
+  background: #d4edda;
+  color: #155724;
+}
+.status.paid {
+  background: #e0f7e9;
+  color: #1d7a3a;
+}
+
+.status.preparing {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status.out-for-delivery {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.status.delivered {
+  background: #d4edda;
+  color: #155724;
+}
+/* to make profile image round */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
