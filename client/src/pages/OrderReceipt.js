@@ -4,7 +4,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 export default function OrderReceipt() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { address, cart } = location.state || { address: {}, cart: [] };
+  const { address, cart, specialInstructions } = location.state || {
+    address: {},
+    cart: [],
+    specialInstructions: "",
+  };
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
@@ -48,6 +52,25 @@ export default function OrderReceipt() {
         </div>
       </div>
 
+      {/* Special Instructions Summary */}
+      {specialInstructions && (
+        <div
+          className="special-instructions"
+          style={{
+            background: "#fffbea",
+            border: "1px solid #ffe58f",
+            borderRadius: 8,
+            padding: 12,
+            marginTop: 12,
+          }}
+        >
+          <strong>Special Instructions:</strong>
+          <p style={{ margin: "6px 0 0 0", whiteSpace: "pre-wrap" }}>
+            {specialInstructions}
+          </p>
+        </div>
+      )}
+
       {/* Actions */}
       <div className="summary-actions">
         <button className="btn-secondary" onClick={() => navigate("/cart")}>
@@ -55,7 +78,9 @@ export default function OrderReceipt() {
         </button>
         <button
           className="btn-primary"
-          onClick={() => navigate("/payment", { state: { address, cart } })}
+          onClick={() =>
+            navigate("/payment", { state: { address, cart, specialInstructions } })
+          }
         >
           Confirm & Pay →
         </button>

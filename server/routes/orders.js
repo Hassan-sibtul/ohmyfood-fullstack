@@ -9,7 +9,7 @@ const auth = require("../middleware/auth");
 // ✅ Create a new order after successful payment
 router.post("/", auth, async (req, res) => {
   try {
-    const { items, totalAmount, address, restaurantId } = req.body;
+    const { items, totalAmount, address, restaurantId, specialInstructions } = req.body;
 
     if (!items || !totalAmount || !address) {
       return res
@@ -51,6 +51,7 @@ router.post("/", auth, async (req, res) => {
         country: address.country,
       },
       status: "Paid",
+      specialInstructions: specialInstructions || "",
     });
 
     await newOrder.save();

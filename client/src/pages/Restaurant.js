@@ -10,7 +10,9 @@ export default function Restaurant() {
   const [rest, setRest] = useState(null);
   const [recommended, setRecommended] = useState([]);
   const [previouslyOrdered, setPreviouslyOrdered] = useState([]);
+  const [dishRatings, setDishRatings] = useState({});
   const [toast, setToast] = useState(null);
+  const [expandedReviews, setExpandedReviews] = useState({});
   const { addToCart } = useContext(CartContext);
 
   // ✅ Fetch restaurant details
@@ -18,6 +20,16 @@ export default function Restaurant() {
     API.get(`/api/restaurants/${id}`)
       .then((r) => setRest(r.data))
       .catch(console.error);
+  }, [id]);
+
+  // ✅ Fetch reviews and ratings for this restaurant
+  useEffect(() => {
+    if (!id) return;
+    API.get(`/api/reviews/restaurant/${id}`)
+      .then((res) => {
+        setDishRatings(res.data.dishStats || {});
+      })
+      .catch((err) => console.error("❌ Error fetching reviews:", err));
   }, [id]);
 
   // ✅ Fetch recommendations
@@ -90,7 +102,9 @@ export default function Restaurant() {
 
       <div className="restaurant-header">
         <img
-          src={`${process.env.REACT_APP_API_URL || "http://localhost:5001"}${rest.image}`}
+          src={`${process.env.REACT_APP_API_URL || "http://localhost:5001"}${
+            rest.image
+          }`}
           alt={rest.name}
           className="restaurant-banner"
         />
@@ -168,6 +182,120 @@ export default function Restaurant() {
             </div>
 
             <h4 style={{ marginBottom: "6px" }}>{m.name}</h4>
+
+            {/* ✅ Display rating if available */}
+            {dishRatings[m.name] && (
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    marginBottom: "4px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    setExpandedReviews((prev) => ({
+                      ...prev,
+                      [m.name]: !prev[m.name],
+                    }))
+                  }
+                >
+                  <span style={{ color: "#ffc107", fontSize: "1em" }}>★</span>
+                  <span style={{ fontWeight: "bold", fontSize: "0.9em" }}>
+                    {dishRatings[m.name].averageRating}
+                  </span>
+                  <span style={{ color: "#999", fontSize: "0.85em" }}>
+                    ({dishRatings[m.name].reviewCount}{" "}
+                    {dishRatings[m.name].reviewCount === 1
+                      ? "review"
+                      : "reviews"}
+                    )
+                  </span>
+                  <span style={{ fontSize: "0.8em", color: "#666" }}>
+                    {expandedReviews[m.name] ? "▲" : "▼"}
+                  </span>
+                </div>
+
+                {/* Show reviews when expanded */}
+                {expandedReviews[m.name] && (
+                  <div
+                    style={{
+                      background: "#f9f9f9",
+                      border: "1px solid #eee",
+                      borderRadius: "6px",
+                      padding: "10px",
+                      marginBottom: "8px",
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                    }}
+                  >
+                    {dishRatings[m.name].reviews
+                      .slice(0, 5)
+                      .map((review, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            borderBottom:
+                              idx <
+                              Math.min(
+                                4,
+                                dishRatings[m.name].reviews.length - 1
+                              )
+                                ? "1px solid #ddd"
+                                : "none",
+                            paddingBottom: "6px",
+                            marginBottom: "6px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              marginBottom: "2px",
+                            }}
+                          >
+                            <span
+                              style={{ color: "#ffc107", fontSize: "0.85em" }}
+                            >
+                              {"★".repeat(review.rating)}
+                              {"☆".repeat(5 - review.rating)}
+                            </span>
+                            <span style={{ fontSize: "0.75em", color: "#666" }}>
+                              {review.userName}
+                            </span>
+                          </div>
+                          {review.comment && (
+                            <p
+                              style={{
+                                fontSize: "0.85em",
+                                color: "#555",
+                                margin: "4px 0 0 0",
+                              }}
+                            >
+                              "{review.comment}"
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    {dishRatings[m.name].reviews.length > 5 && (
+                      <p
+                        style={{
+                          fontSize: "0.8em",
+                          color: "#999",
+                          margin: "4px 0 0 0",
+                          textAlign: "center",
+                        }}
+                      >
+                        + {dishRatings[m.name].reviews.length - 5} more reviews
+                      </p>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+
             <p
               style={{
                 color: "#666",

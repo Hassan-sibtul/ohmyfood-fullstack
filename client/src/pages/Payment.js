@@ -14,7 +14,7 @@ const stripePromise = loadStripe(
   "pk_test_51SL4gHFrLsiRJStWdnqFsEdHiiDQYDvTOGEe53lwevsgEMz2PxhP4QjKcqgbf8h2N8EKmkIXIDLfELusYLepJqNE00oIRsCveh"
 );
 
-function CheckoutForm({ address, cart }) {
+function CheckoutForm({ address, cart, specialInstructions }) {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -152,6 +152,7 @@ function CheckoutForm({ address, cart }) {
             items,
             totalAmount: orderTotal,
             address,
+            specialInstructions,
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -341,13 +342,18 @@ function CheckoutForm({ address, cart }) {
 
 export default function Payment() {
   const location = useLocation();
-  const { address, cart } = location.state || { address: {}, cart: [] };
+  const { address, cart, specialInstructions } =
+    location.state || { address: {}, cart: [], specialInstructions: "" };
 
   return (
     <Elements stripe={stripePromise}>
       <div className="payment-container">
         <h2>Payment</h2>
-        <CheckoutForm address={address} cart={cart} />
+        <CheckoutForm
+          address={address}
+          cart={cart}
+          specialInstructions={specialInstructions}
+        />
       </div>
     </Elements>
   );

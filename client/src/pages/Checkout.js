@@ -14,6 +14,7 @@ export default function Checkout() {
     country: "",
   });
   const [loading, setLoading] = useState(true);
+  const [specialInstructions, setSpecialInstructions] = useState("");
 
   // Fetch saved address when component mounts
   useEffect(() => {
@@ -53,8 +54,8 @@ export default function Checkout() {
       return;
     }
 
-    // ✅ Send to OrderReceipt with address + cart
-    navigate("/order-receipt", { state: { address, cart } });
+    // ✅ Send to OrderReceipt with address + cart + special instructions
+    navigate("/order-receipt", { state: { address, cart, specialInstructions } });
   };
 
   if (loading) {
@@ -111,6 +112,19 @@ export default function Checkout() {
               value={address.country}
               onChange={handleChange}
               required
+            />
+          </label>
+
+          {/* Special Instructions */}
+          <label>
+            Special Instructions (optional)
+            <textarea
+              name="specialInstructions"
+              placeholder="e.g. Ring the doorbell twice, leave at the doorstep, no onions, etc."
+              value={specialInstructions}
+              onChange={(e) => setSpecialInstructions(e.target.value)}
+              rows={4}
+              style={{ width: "100%", resize: "vertical" }}
             />
           </label>
         </div>

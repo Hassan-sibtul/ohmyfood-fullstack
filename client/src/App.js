@@ -17,6 +17,7 @@ import AdminRoute from "./components/AdminRoute";
 import Account from "./pages/Account";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import TrackOrder from "./pages/TrackOrder";
 
 function App() {
   return (
@@ -31,6 +32,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/track-order" element={<TrackOrder />} />
+          <Route path="/track-order/:id" element={<TrackOrder />} />
 
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-receipt" element={<OrderReceipt />} />

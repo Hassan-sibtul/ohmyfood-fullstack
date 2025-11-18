@@ -218,6 +218,25 @@ export default function OrderConfirmation() {
                 </div>
                 <div>{order.address?.country}</div>
               </div>
+
+              {/* Track My Order button */}
+              <button
+                onClick={() =>
+                  navigate("/track-order", { state: { order } })
+                }
+                style={{
+                  marginTop: 12,
+                  background: "#007bff",
+                  color: "#fff",
+                  border: "none",
+                  padding: "8px 14px",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                }}
+              >
+                🗺️ Track My Order
+              </button>
             </div>
           ))}
         </div>

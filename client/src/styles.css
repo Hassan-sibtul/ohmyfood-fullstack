@@ -835,27 +835,73 @@ button {
 }
 /* Admin Orders page */
 .admin-orders {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 2rem auto;
   padding: 1rem;
 }
 
-.orders-table {
+/* Accordion layout for orders */
+.order-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.order-summary {
   width: 100%;
-  border-collapse: collapse;
-}
-
-.orders-table th,
-.orders-table td {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 22px 92px 1.2fr 1fr 100px 140px 160px;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #fafafa;
+  border: 0;
   text-align: left;
-  vertical-align: top;
+  cursor: pointer;
 }
 
-.orders-table th {
-  background: #f5f5f5;
+.order-summary:hover { background: #f6f7ff; }
+
+.chevron { transition: transform 0.2s ease; color: #666; }
+.chevron.rot { transform: rotate(90deg); }
+
+.summary-id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: #444; }
+.summary-customer { display: flex; flex-direction: column; }
+.summary-sub { color: #777; font-size: 0.82rem; }
+.summary-restaurant { color: #333; }
+.summary-total { font-weight: 700; color: #111; }
+.summary-date { color: #666; font-size: 0.85rem; }
+
+.order-details {
+  overflow: hidden;
+  transition: max-height 0.22s ease;
+  border-top: 1px solid #eee;
 }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 14px;
+}
+
+.detail-block h4 { margin: 0 0 8px; font-size: 0.95rem; color: #333; }
+.detail-block p { margin: 0; }
+.detail-block .muted { color: #888; }
+
+.items-list { margin: 0; padding-left: 16px; }
+.items-list li { margin: 4px 0; }
+.item-name { font-weight: 500; }
+.item-qty { color: #666; margin-left: 6px; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
 .status {
   font-weight: bold;
