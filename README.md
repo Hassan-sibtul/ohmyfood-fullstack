@@ -1,89 +1,74 @@
-⭐ **OhMyFood – Fullstack Application**
+# ⭐ OhMyFood – Fullstack Application
 
 A full-stack food ordering system built with React, Node.js, Express, and MongoDB.
 
 This project includes:
 
-Frontend: React (SPA)
+- **Frontend:** React (SPA)
+- **Backend:** Node.js + Express REST API
+- **Database:** MongoDB (Mongoose ODM)
 
-Backend: Node.js + Express REST API
+---
 
-Database: MongoDB (Mongoose ODM)
-
-🚀 **Getting Started**
+## 🚀 Getting Started
 
 Follow the steps below to run the project locally on your computer.
 
-📁 Project Structure
-ohmyfood-fullstack/
-│
-├── server/      → Node.js + Express backend
-└── client/      → React frontend
+---
 
-🛠️ **Requirements**
+## 📁 Project Structure
+
+
+ohmyfood-fullstack/
+
+1. server/      → Node.js + Express backend
+2. client/      → React frontend
+
+
+---
+
+## 🛠️ Requirements
 
 Make sure you have installed:
 
-Node.js (v16 or higher recommended)
+- Node.js (v16 or higher recommended)
+- npm (comes with Node.js)
+- MongoDB Atlas account or local MongoDB
 
-npm (comes with Node.js)
+---
 
-MongoDB Atlas account or local MongoDB
+## ⚙️ 1. Setup the Backend (Server)
 
-⚙️**1. Setup the Backend (Server)**
-📌 Step 1 — Go to the server folder
+### 📌 Step 1 — Go to the server folder
+```bash
 cd server
-
-📌 Step 2 — Install backend dependencies
+```
+### 📌 Step 2 — Install backend dependencies 
+```bash
 npm install
-
-📌 Step 3 — Create your .env file
-
-Copy the example file:
-
-cp .env.example .env
-
-
-Then open .env and fill in:
-
-MONGO_URI=your-mongodb-connection-string
-JWT_SECRET=your-secret-key
-STRIPE_SECRET_KEY=your-stripe-secret
-
-📌 Optional — Seed sample restaurants
-
-This loads demo restaurants into the database.
-
-npm run seed
-
-📌 Step 4 — Start the backend
+```
+### 📌 Step 3 — Start the Backend
+```bash
 npm run dev
-
-
+```
 Your backend will run at:
-
 👉 http://localhost:5000
 
-🎨 **2. Setup the Frontend (Client)**
-📌 Step 1 — Go to the client folder
-cd ../client
-
-📌 Step 2 — Install frontend dependencies
-npm install
-
-📌 Step 3 — Start the React development server
+## 🎨 2. Setup the Frontend (Client)
+### 📌 Step 1 — Go to the client folder
+```bash
+cd client
+```
+### 📌 Step 2 — Start the development server
+```bash
 npm start
-
-
+```
 Your frontend will run at:
 👉 http://localhost:3000
 
-React is already configured to talk to the backend at:
+## 🧪 3. How to Use the Application
 
-http://localhost:5000/api
-
-🧪 **3. How to Use the Application**
-👤 Customer
+### 👤 Customer Features
 
 Browse restaurants
 
@@ -101,20 +86,12 @@ Leave reviews
 
 Earn loyalty points
 
-🛠️ **Admin**
+### 🛠️ Admin Features
 
-Login as admin
+Login as admin (Email: admin@restaurant.com, Password: admin123)
 
 View all orders
 
 Update order status
 
 View analytics (total sales, top customer, most ordered dish)
-
-🧾 **Stripe Test Card**
-
-To test the payment, use:
-
-Card Number: 4242 4242 4242 4242
-Expiry: any future date
-CVC: any 3 digits
