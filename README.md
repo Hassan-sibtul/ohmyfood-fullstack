@@ -1,4 +1,4 @@
-⭐ OhMyFood – Fullstack Application
+⭐ **OhMyFood – Fullstack Application**
 
 A full-stack food ordering system built with React, Node.js, Express, and MongoDB.
 
@@ -10,7 +10,7 @@ Backend: Node.js + Express REST API
 
 Database: MongoDB (Mongoose ODM)
 
-🚀 Getting Started
+🚀 **Getting Started**
 
 Follow the steps below to run the project locally on your computer.
 
@@ -20,7 +20,7 @@ ohmyfood-fullstack/
 ├── server/      → Node.js + Express backend
 └── client/      → React frontend
 
-🛠️ Requirements
+🛠️ **Requirements**
 
 Make sure you have installed:
 
@@ -30,7 +30,7 @@ npm (comes with Node.js)
 
 MongoDB Atlas account or local MongoDB
 
-⚙️ 1. Setup the Backend (Server)
+⚙️**1. Setup the Backend (Server)**
 📌 Step 1 — Go to the server folder
 cd server
 
@@ -64,7 +64,7 @@ Your backend will run at:
 
 👉 http://localhost:5000
 
-🎨 2. Setup the Frontend (Client)
+🎨 **2. Setup the Frontend (Client)**
 📌 Step 1 — Go to the client folder
 cd ../client
 
@@ -82,7 +82,7 @@ React is already configured to talk to the backend at:
 
 http://localhost:5000/api
 
-🧪 3. How to Use the Application
+🧪 **3. How to Use the Application**
 👤 Customer
 
 Browse restaurants
@@ -101,7 +101,7 @@ Leave reviews
 
 Earn loyalty points
 
-🛠️ Admin
+🛠️ **Admin**
 
 Login as admin
 
@@ -111,7 +111,7 @@ Update order status
 
 View analytics (total sales, top customer, most ordered dish)
 
-🧾 Stripe Test Card
+🧾 **Stripe Test Card**
 
 To test the payment, use:
 
