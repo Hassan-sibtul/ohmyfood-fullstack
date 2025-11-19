@@ -1,52 +1,120 @@
-OhMyFood - Fullstack Starter
+⭐ OhMyFood – Fullstack Application
 
-This package contains a starter full-stack project built from your existing front-end assets.
+A full-stack food ordering system built with React, Node.js, Express, and MongoDB.
 
-Folders:
+This project includes:
 
-- server: Node/Express backend (models, routes, seed)
-- client: React frontend (skeleton - use create-react-app or paste into an existing CRA project)
+Frontend: React (SPA)
 
-Quickstart:
+Backend: Node.js + Express REST API
 
-1. Server:
-   cd server
-   npm install
-   copy .env.example to .env and edit (MONGO_URI, JWT_SECRET)
-   npm run seed # (optional) seed sample data
-   npm run dev
+Database: MongoDB (Mongoose ODM)
 
-2. Client:
-   cd client
-   npm install
-   npm start
+🚀 Getting Started
 
-The client expects the API at http://localhost:5000/api by default.
+Follow the steps below to run the project locally on your computer.
 
-You can now adapt the React components and styles with your original HTML/CSS.
-OhMyFood - Fullstack Starter
+📁 Project Structure
+ohmyfood-fullstack/
+│
+├── server/      → Node.js + Express backend
+└── client/      → React frontend
 
-This package contains a starter full-stack project built from your existing front-end assets.
+🛠️ Requirements
 
-Folders:
+Make sure you have installed:
 
-- server: Node/Express backend (models, routes, seed)
-- client: React frontend (skeleton - use create-react-app or paste into an existing CRA project)
+Node.js (v16 or higher recommended)
 
-Quickstart:
+npm (comes with Node.js)
 
-1. Server:
-   cd server
-   npm install
-   copy .env.example to .env and edit (MONGO_URI, JWT_SECRET)
-   npm run seed # (optional) seed sample data
-   npm run dev
+MongoDB Atlas account or local MongoDB
 
-2. Client:
-   cd client
-   npm install
-   npm start
+⚙️ 1. Setup the Backend (Server)
+📌 Step 1 — Go to the server folder
+cd server
 
-The client expects the API at http://localhost:5000/api by default.
+📌 Step 2 — Install backend dependencies
+npm install
 
-You can now adapt the React components and styles with your original HTML/CSS.
+📌 Step 3 — Create your .env file
+
+Copy the example file:
+
+cp .env.example .env
+
+
+Then open .env and fill in:
+
+MONGO_URI=your-mongodb-connection-string
+JWT_SECRET=your-secret-key
+STRIPE_SECRET_KEY=your-stripe-secret
+
+📌 Optional — Seed sample restaurants
+
+This loads demo restaurants into the database.
+
+npm run seed
+
+📌 Step 4 — Start the backend
+npm run dev
+
+
+Your backend will run at:
+
+👉 http://localhost:5000
+
+🎨 2. Setup the Frontend (Client)
+📌 Step 1 — Go to the client folder
+cd ../client
+
+📌 Step 2 — Install frontend dependencies
+npm install
+
+📌 Step 3 — Start the React development server
+npm start
+
+
+Your frontend will run at:
+👉 http://localhost:3000
+
+React is already configured to talk to the backend at:
+
+http://localhost:5000/api
+
+🧪 3. How to Use the Application
+👤 Customer
+
+Browse restaurants
+
+View menus
+
+Add items to cart
+
+Checkout with special instructions
+
+Pay using Stripe test card
+
+Track order status
+
+Leave reviews
+
+Earn loyalty points
+
+🛠️ Admin
+
+Login as admin
+
+View all orders
+
+Update order status
+
+View analytics (total sales, top customer, most ordered dish)
+
+🧾 Stripe Test Card
+
+To test the payment, use:
+
+Card Number: 4242 4242 4242 4242
+Expiry: any future date
+CVC: any 3 digits
