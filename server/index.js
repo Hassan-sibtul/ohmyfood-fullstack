@@ -5,8 +5,16 @@ const cors = require("cors");
 const path = require("path");
 
 const app = express();
+
+// CORS configuration - allow all origins for testing
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
 app.use(express.json());
-app.use(cors());
 
 // Serve images from a public folder (for development)
 app.use("/static", express.static(path.join(__dirname, "public")));
@@ -49,4 +57,10 @@ app.get("/", (req, res) => {
 });
 
 const port = process.env.PORT || 5001;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+  console.log("Environment check:", {
+    smtp: process.env.SMTP_HOST ? "✓" : "✗",
+    frontend: process.env.FRONTEND_URL ? "✓" : "✗"
+  });
+});

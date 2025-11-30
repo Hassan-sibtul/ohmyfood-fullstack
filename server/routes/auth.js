@@ -3,33 +3,37 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+const sgMail = require("@sendgrid/mail");
 const User = require("../models/User");
 
-// Mail transport (fallback to console if SMTP not configured)
-let transporter;
-if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-  transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: Boolean(process.env.SMTP_SECURE === "true"),
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-} else {
-  transporter = {
-    sendMail: async (opts) => {
-      console.log("📧 [DEV] Email send simulated:", {
-        to: opts.to,
-        subject: opts.subject,
-        text: opts.text,
-        html: opts.html,
-      });
-      return { messageId: "dev-simulated" };
-    },
+// Configure SendGrid
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
+
+// Email sending function
+async function sendEmail({ to, subject, html, text }) {
+  if (!process.env.SENDGRID_API_KEY) {
+    console.log("📧 [DEV] Email send simulated:", { to, subject, text, html });
+    return { messageId: "dev-simulated" };
+  }
+
+  const msg = {
+    to,
+    from: process.env.FROM_EMAIL || "no-reply@ohmyfood.local",
+    subject,
+    text,
+    html,
   };
+
+  try {
+    await sgMail.send(msg);
+    console.log("✅ Email sent successfully to:", to);
+    return { messageId: "sent" };
+  } catch (error) {
+    console.error("❌ SendGrid error:", error.response?.body || error);
+    throw error;
+  }
 }
 
 // ✅ Register new user
@@ -151,10 +155,8 @@ router.post("/forgot-password", async (req, res) => {
     const frontend = process.env.FRONTEND_URL || "http://localhost:3000";
     const resetUrl = `${frontend}/reset-password/${rawToken}`;
 
-    // Send email
-    const from = process.env.FROM_EMAIL || "no-reply@ohmyfood.local";
-    await transporter.sendMail({
-      from,
+    // Send email using SendGrid HTTP API
+    await sendEmail({
       to: email,
       subject: "OhMyFood Password Reset",
       html: `
