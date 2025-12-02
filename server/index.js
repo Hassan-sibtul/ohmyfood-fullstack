@@ -7,12 +7,14 @@ const path = require("path");
 const app = express();
 
 // CORS configuration - allow all origins for testing
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
@@ -61,6 +63,6 @@ app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   console.log("Environment check:", {
     smtp: process.env.SMTP_HOST ? "✓" : "✗",
-    frontend: process.env.FRONTEND_URL ? "✓" : "✗"
+    frontend: process.env.FRONTEND_URL ? "✓" : "✗",
   });
 });

@@ -64,7 +64,7 @@ router.post("/register", async (req, res) => {
       { id: user._id, email: user.email, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
       {
-      expiresIn: "30d",
+        expiresIn: "30d",
       }
     );
 
@@ -130,7 +130,8 @@ router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
     const genericMsg = {
-      message: "If an account exists for this email, a reset link has been sent.",
+      message:
+        "If an account exists for this email, a reset link has been sent.",
     };
 
     if (!email) return res.status(400).json({ message: "Email is required" });
@@ -143,10 +144,7 @@ router.post("/forgot-password", async (req, res) => {
 
     // Generate token and store hashed token + expiry
     const rawToken = crypto.randomBytes(32).toString("hex");
-    const hashed = crypto
-      .createHash("sha256")
-      .update(rawToken)
-      .digest("hex");
+    const hashed = crypto.createHash("sha256").update(rawToken).digest("hex");
 
     user.resetToken = hashed;
     user.resetTokenExpire = Date.now() + 60 * 60 * 1000; // 1 hour

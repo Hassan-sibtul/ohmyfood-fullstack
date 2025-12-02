@@ -52,7 +52,7 @@ npm install
 npm run dev
 ```
 Your backend will run at:
-👉 http://localhost:5000
+👉 http://localhost:5001
 
 ## 🎨 2. Setup the Frontend (Client)
 ### 📌 Step 1 — Go to the client folder
@@ -95,3 +95,13 @@ View all orders
 Update order status
 
 View analytics (total sales, top customer, most ordered dish)
+
+## Deployed System (Live URL)
+### Backend(Render)
+https://ohmyfood-fullstack.onrender.com
+### Frontend(Vercel)
+https://ohmyfood-fullstack.vercel.app
+
+The backend (Render) must be running before the frontend (Vercel) to ensure full system functionality.
+
+
