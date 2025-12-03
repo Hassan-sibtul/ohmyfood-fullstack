@@ -14,9 +14,9 @@ export default function AdminRoute({ children }) {
       return <Navigate to="/" />; // Non-admins are redirected
     }
 
-    return children; // ✅ Admin can access
+    return children; // Admin can access
   } catch (err) {
-    console.error("❌ Invalid token", err);
+    console.error("Invalid token", err);
     return <Navigate to="/login" />;
   }
 }

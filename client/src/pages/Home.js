@@ -57,7 +57,7 @@ export default function Home() {
     <div>
       {/* Hero Section */}
       <section className="hero">
-        <h1>Delicious food, delivered fast 🍽️</h1>
+        <h1>Delicious food, delivered fast</h1>
         <p>Choose your favorite restaurant and enjoy fresh meals at home.</p>
         <button onClick={handleBrowseClick} className="hero-btn">
           Browse Restaurants
@@ -100,7 +100,9 @@ export default function Home() {
           {filtered.map((rest) => (
             <div className="restaurant-card" key={rest._id}>
               <img
-                src={`${process.env.REACT_APP_API_URL || "http://localhost:5001"}${rest.image}`}
+                src={`${
+                  process.env.REACT_APP_API_URL || "http://localhost:5001"
+                }${rest.image}`}
                 alt={rest.name}
               />
               <h3>{rest.name}</h3>

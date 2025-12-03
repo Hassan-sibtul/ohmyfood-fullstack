@@ -24,7 +24,7 @@ app.use("/static", express.static(path.join(__dirname, "public")));
 // Connect to MongoDB (gracefully handle missing MONGO_URI in local dev)
 if (!process.env.MONGO_URI) {
   console.warn(
-    "⚠️  MONGO_URI not set. The server will start, but database operations will fail. Add MONGO_URI to your .env."
+    "WARNING: MONGO_URI not set. The server will start, but database operations will fail. Add MONGO_URI to your .env."
   );
 } else {
   mongoose

@@ -54,8 +54,10 @@ export default function Checkout() {
       return;
     }
 
-    // ✅ Send to OrderReceipt with address + cart + special instructions
-    navigate("/order-receipt", { state: { address, cart, specialInstructions } });
+    // Send to OrderReceipt with address, cart, and special instructions
+    navigate("/order-receipt", {
+      state: { address, cart, specialInstructions },
+    });
   };
 
   if (loading) {

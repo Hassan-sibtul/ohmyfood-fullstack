@@ -173,7 +173,7 @@ mongoose
     ];
 
     const inserted = await Restaurant.insertMany(restaurants);
-    // 👨‍🍳 Seed admin user
+    // Seed admin user
     const hashedPassword = await bcrypt.hash("admin123", 10);
     const admin = new User({
       name: "Restaurant Admin",

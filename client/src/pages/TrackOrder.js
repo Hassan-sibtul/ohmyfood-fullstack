@@ -4,19 +4,19 @@ import DeliveryTracker from "../components/DeliveryTracker";
 import Toast from "../components/Toast";
 import API from "../api";
 
-// Status-specific emoji for toast
+// Status-specific prefix for toast
 const statusEmoji = (status) => {
   switch (status) {
     case "Paid":
-      return "💳";
+      return "[Paid]";
     case "Preparing":
-      return "👨‍🍳";
+      return "[Preparing]";
     case "Out for Delivery":
-      return "🚚";
+      return "[Delivery]";
     case "Delivered":
-      return "✅";
+      return "[Complete]";
     default:
-      return "📦";
+      return "[Order]";
   }
 };
 
@@ -36,7 +36,7 @@ export default function TrackOrder() {
     if (id && !order) {
       const token = localStorage.getItem("token");
       if (!token) return;
-      
+
       API.get("/api/orders/my-orders", {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -47,25 +47,29 @@ export default function TrackOrder() {
             previousStatusRef.current = foundOrder.status;
           }
         })
-        .catch((err) => console.error("❌ Failed to fetch order:", err));
+        .catch((err) => console.error("Failed to fetch order:", err));
     }
   }, [id, order]);
 
   // Play subtle notification sound
   const playNotificationSound = () => {
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
+
       oscillator.frequency.value = 800;
       oscillator.type = "sine";
       gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-      
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioContext.currentTime + 0.3
+      );
+
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.3);
     } catch (err) {
@@ -73,7 +77,7 @@ export default function TrackOrder() {
     }
   };
 
-  // ✅ Poll for order updates every 5 seconds
+  // Poll for order updates every 5 seconds
   useEffect(() => {
     if (!order?._id) return;
 
@@ -88,8 +92,15 @@ export default function TrackOrder() {
           const updatedOrder = res.data.find((o) => o._id === order._id);
           if (updatedOrder) {
             // Check for status change
-            if (previousStatusRef.current && previousStatusRef.current !== updatedOrder.status) {
-              setToastMessage(`${statusEmoji(updatedOrder.status)} Your order is now ${updatedOrder.status}!`);
+            if (
+              previousStatusRef.current &&
+              previousStatusRef.current !== updatedOrder.status
+            ) {
+              setToastMessage(
+                `${statusEmoji(updatedOrder.status)} Your order is now ${
+                  updatedOrder.status
+                }!`
+              );
               setToastVisible(true);
               playNotificationSound();
             }
@@ -97,7 +108,7 @@ export default function TrackOrder() {
             setOrder(updatedOrder);
           }
         })
-        .catch((err) => console.error("❌ Polling error:", err));
+        .catch((err) => console.error("Polling error:", err));
     }, 5000);
 
     return () => clearInterval(interval);
@@ -134,10 +145,10 @@ export default function TrackOrder() {
         padding: "20px",
       }}
     >
-      <Toast 
-        message={toastMessage} 
-        visible={toastVisible} 
-        onClose={() => setToastVisible(false)} 
+      <Toast
+        message={toastMessage}
+        visible={toastVisible}
+        onClose={() => setToastVisible(false)}
       />
 
       <button

@@ -36,7 +36,7 @@ export default function Account() {
         setAddress(data.address || {});
         setBillingDetails(data.billingDetails || {});
       })
-      .catch((err) => console.error("❌ Fetch profile error:", err))
+      .catch((err) => console.error("Fetch profile error:", err))
       .finally(() => setLoading(false));
   }, [navigate]);
 
@@ -56,11 +56,11 @@ export default function Account() {
         { address, billingDetails },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("✅ Profile updated successfully!");
+      alert("Profile updated successfully!");
       setUser(data.user || user);
     } catch (err) {
       console.error("Profile update failed:", err);
-      alert("❌ Could not save profile changes.");
+      alert("Could not save profile changes.");
     }
   };
 

@@ -16,7 +16,7 @@ export default function Recommendations({ restaurantId, currentMenu = [] }) {
       .then((res) => {
         const recommended = res.data || [];
 
-        // ✅ Filter out duplicates already in the restaurant menu
+        // Filter out duplicates already in the restaurant menu
         const filtered = recommended.filter(
           (rec) =>
             !currentMenu.some(
@@ -29,7 +29,7 @@ export default function Recommendations({ restaurantId, currentMenu = [] }) {
         setItems(filtered);
       })
       .catch((err) =>
-        console.error("❌ Recommendation fetch error:", err.message)
+        console.error("Recommendation fetch error:", err.message)
       );
   }, [restaurantId, currentMenu]);
 
@@ -53,7 +53,7 @@ export default function Recommendations({ restaurantId, currentMenu = [] }) {
           gap: "8px",
         }}
       >
-        🍽️ You might also like
+        You might also like
       </h3>
 
       <div

@@ -17,23 +17,23 @@ export default function AdminOrders() {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => {
-        console.log("📦 Orders received:", res.data);
+        console.log("Orders received:", res.data);
         setOrders(res.data);
         calculateAnalytics(res.data);
       })
-      .catch((err) => console.error("❌ Failed to fetch orders:", err))
+      .catch((err) => console.error("Failed to fetch orders:", err))
       .finally(() => setLoading(false));
   }, []);
 
   // Calculate analytics from orders
   const calculateAnalytics = (ordersList) => {
-    // 1️⃣ Total sales
+    // Total sales
     const totalSales = ordersList.reduce(
       (sum, order) => sum + (order.totalAmount || 0),
       0
     );
 
-    // 2️⃣ Most ordered dish
+    // Most ordered dish
     const dishCount = {};
     ordersList.forEach((order) => {
       order.items.forEach((item) => {
@@ -46,11 +46,11 @@ export default function AdminOrders() {
       });
     });
 
-    const mostOrderedDish = Object.values(dishCount).sort(
-      (a, b) => b.totalQty - a.totalQty
-    )[0] || null;
+    const mostOrderedDish =
+      Object.values(dishCount).sort((a, b) => b.totalQty - a.totalQty)[0] ||
+      null;
 
-    // 3️⃣ Top customer by loyalty points
+    // Top customer by loyalty points
     const customerMap = {};
     ordersList.forEach((order) => {
       if (order.user) {
@@ -67,9 +67,10 @@ export default function AdminOrders() {
       }
     });
 
-    const topCustomer = Object.values(customerMap).sort(
-      (a, b) => b.loyaltyPoints - a.loyaltyPoints
-    )[0] || null;
+    const topCustomer =
+      Object.values(customerMap).sort(
+        (a, b) => b.loyaltyPoints - a.loyaltyPoints
+      )[0] || null;
 
     setAnalytics({ totalSales, mostOrderedDish, topCustomer });
   };
@@ -122,7 +123,9 @@ export default function AdminOrders() {
                 {order.user?.name || "N/A"}
                 <small className="summary-sub">{order.user?.email || ""}</small>
               </span>
-              <span className="summary-restaurant">{order.restaurant?.name || "Unknown"}</span>
+              <span className="summary-restaurant">
+                {order.restaurant?.name || "Unknown"}
+              </span>
               <span className="summary-total">£{total}</span>
               <span className="summary-status">
                 <span
@@ -136,7 +139,10 @@ export default function AdminOrders() {
               <span className="summary-date">{created}</span>
             </button>
 
-            <div className="order-details" style={{ maxHeight: isOpen ? 800 : 0 }}>
+            <div
+              className="order-details"
+              style={{ maxHeight: isOpen ? 800 : 0 }}
+            >
               <div className="detail-grid">
                 <div className="detail-block">
                   <h4>Items</h4>
@@ -164,7 +170,9 @@ export default function AdminOrders() {
                 <div className="detail-block">
                   <h4>Instructions</h4>
                   {order.specialInstructions ? (
-                    <p style={{ whiteSpace: "pre-wrap" }}>{order.specialInstructions}</p>
+                    <p style={{ whiteSpace: "pre-wrap" }}>
+                      {order.specialInstructions}
+                    </p>
                   ) : (
                     <p className="muted">—</p>
                   )}
@@ -192,7 +200,7 @@ export default function AdminOrders() {
 
   return (
     <div className="admin-orders">
-      <h2>📦 Restaurant Orders</h2>
+      <h2>Restaurant Orders</h2>
 
       {/* Analytics Dashboard */}
       <div
@@ -216,7 +224,7 @@ export default function AdminOrders() {
           }}
         >
           <h4 style={{ margin: "0 0 10px 0", fontSize: "0.9em", opacity: 0.9 }}>
-            💰 Total Sales
+            Total Sales
           </h4>
           <p style={{ margin: 0, fontSize: "2em", fontWeight: "bold" }}>
             £{analytics.totalSales.toFixed(2)}
@@ -235,14 +243,16 @@ export default function AdminOrders() {
           }}
         >
           <h4 style={{ margin: "0 0 10px 0", fontSize: "0.9em", opacity: 0.9 }}>
-            🍽️ Most Ordered Dish
+            Most Ordered Dish
           </h4>
           {analytics.mostOrderedDish ? (
             <>
               <p style={{ margin: 0, fontSize: "1.3em", fontWeight: "bold" }}>
                 {analytics.mostOrderedDish.name}
               </p>
-              <p style={{ margin: "5px 0 0 0", fontSize: "0.9em", opacity: 0.9 }}>
+              <p
+                style={{ margin: "5px 0 0 0", fontSize: "0.9em", opacity: 0.9 }}
+              >
                 {analytics.mostOrderedDish.totalQty} orders
               </p>
             </>
@@ -270,8 +280,11 @@ export default function AdminOrders() {
               <p style={{ margin: 0, fontSize: "1.3em", fontWeight: "bold" }}>
                 {analytics.topCustomer.name}
               </p>
-              <p style={{ margin: "5px 0 0 0", fontSize: "0.9em", opacity: 0.9 }}>
-                {analytics.topCustomer.loyaltyPoints} points • {analytics.topCustomer.orderCount} orders
+              <p
+                style={{ margin: "5px 0 0 0", fontSize: "0.9em", opacity: 0.9 }}
+              >
+                {analytics.topCustomer.loyaltyPoints} points •{" "}
+                {analytics.topCustomer.orderCount} orders
               </p>
             </>
           ) : (

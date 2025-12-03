@@ -41,7 +41,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
 
-          {/* ✅ Admin-only route */}
+          {/* Admin-only route */}
           <Route
             path="/admin/orders"
             element={

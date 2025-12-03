@@ -26,7 +26,7 @@ function CheckoutForm({ address, cart, specialInstructions }) {
     0
   );
 
-  // ✅ Billing + loyalty point states
+  // Billing and loyalty point states
   const [billingDetails, setBillingDetails] = useState({
     name: "",
     email: "",
@@ -42,7 +42,7 @@ function CheckoutForm({ address, cart, specialInstructions }) {
 
   const total = Math.max(subtotal - discount, 0);
 
-  // ✅ Fetch saved profile + loyalty points
+  // Fetch saved profile and loyalty points
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -63,7 +63,7 @@ function CheckoutForm({ address, cart, specialInstructions }) {
         if (loyaltyRes.data?.loyaltyPoints)
           setUserPoints(loyaltyRes.data.loyaltyPoints);
       } catch (err) {
-        console.warn("⚠️ Could not load user profile/points:", err?.message);
+        console.warn("Could not load user profile/points:", err?.message);
       }
     };
     fetchProfile();
@@ -73,7 +73,7 @@ function CheckoutForm({ address, cart, specialInstructions }) {
     setBillingDetails({ ...billingDetails, [e.target.name]: e.target.value });
   };
 
-  // 💰 Apply loyalty points for discount
+  // Apply loyalty points for discount
   const handleApplyPoints = () => {
     if (pointsToUse <= 0 || pointsToUse > userPoints) {
       alert("Enter a valid number of points to redeem.");
@@ -129,7 +129,7 @@ function CheckoutForm({ address, cart, specialInstructions }) {
       if (confirm.paymentIntent.status !== "succeeded")
         throw new Error("Payment not successful.");
 
-      // 3️⃣ Group items by restaurant
+      // Step 3: Group items by restaurant
       const groupedByRestaurant = cart.reduce((acc, item) => {
         if (!item.restaurantId) {
           console.warn("Item missing restaurantId:", item);
@@ -142,7 +142,7 @@ function CheckoutForm({ address, cart, specialInstructions }) {
 
       const createdOrders = [];
 
-      // 4️⃣ Create an order for each restaurant
+      // Step 4: Create an order for each restaurant
       for (const [restaurantId, items] of Object.entries(groupedByRestaurant)) {
         const orderTotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
         const orderRes = await API.post(
@@ -159,7 +159,7 @@ function CheckoutForm({ address, cart, specialInstructions }) {
         createdOrders.push(orderRes.data);
       }
 
-      // 5️⃣ Deduct redeemed points
+      // Step 5: Deduct redeemed points
       if (pointsToUse > 0) {
         try {
           await API.put(
@@ -167,13 +167,13 @@ function CheckoutForm({ address, cart, specialInstructions }) {
             { pointsToRedeem: pointsToUse },
             { headers: { Authorization: `Bearer ${token}` } }
           );
-          console.log(`💎 Redeemed ${pointsToUse} points`);
+          console.log(`Redeemed ${pointsToUse} points`);
         } catch (err) {
-          console.warn("⚠️ Could not redeem points:", err?.message);
+          console.warn("Could not redeem points:", err?.message);
         }
       }
 
-      // 6️⃣ Save billing info for next time
+      // Step 6: Save billing info for next time
       try {
         await API.put(
           "/api/users/profile",
@@ -184,7 +184,7 @@ function CheckoutForm({ address, cart, specialInstructions }) {
         console.warn("Profile update failed:", err?.message);
       }
 
-      // 7️⃣ Clear cart & redirect
+      // Step 7: Clear cart & redirect
       clearCart();
       localStorage.removeItem("cart");
 
@@ -192,8 +192,8 @@ function CheckoutForm({ address, cart, specialInstructions }) {
         state: {
           total: payableAmount,
           orders: createdOrders,
-          discount,                 // amount discounted on Payment page
-          subtotal,                 // original subtotal before discount
+          discount, // amount discounted on Payment page
+          subtotal, // original subtotal before discount
           pointsRedeemed: pointsToUse, // points used this payment
         },
         replace: true,
@@ -342,8 +342,11 @@ function CheckoutForm({ address, cart, specialInstructions }) {
 
 export default function Payment() {
   const location = useLocation();
-  const { address, cart, specialInstructions } =
-    location.state || { address: {}, cart: [], specialInstructions: "" };
+  const { address, cart, specialInstructions } = location.state || {
+    address: {},
+    cart: [],
+    specialInstructions: "",
+  };
 
   return (
     <Elements stripe={stripePromise}>

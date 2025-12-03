@@ -5,7 +5,7 @@ const auth = require("../middleware/auth");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// ✅ Create a payment intent
+// Create a payment intent
 router.post("/create-payment-intent", auth, async (req, res) => {
   try {
     const { amount } = req.body; // amount in cents
@@ -21,7 +21,7 @@ router.post("/create-payment-intent", auth, async (req, res) => {
 
     res.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
-    console.error("❌ Stripe error:", err);
+    console.error("Stripe error:", err);
     res.status(500).json({ error: "Failed to create payment intent" });
   }
 });

@@ -4,27 +4,27 @@ const Order = require("../models/Order");
 const Restaurant = require("../models/Restaurant");
 const auth = require("../middleware/auth");
 
-// ✅ GET /api/recommendations/:restaurantId
+// GET /api/recommendations/:restaurantId
 // Returns recommended items for the logged-in user in the same restaurant
 router.get("/:restaurantId", auth, async (req, res) => {
   try {
     const { restaurantId } = req.params;
-    console.log("🔍 Getting recommendations for:", restaurantId);
+    console.log("Getting recommendations for:", restaurantId);
 
-    // 1️⃣ Get all user's past orders
+    // Step 1: Get all user's past orders
     const pastOrders = await Order.find({ user: req.user.id }).lean();
-    console.log("📦 Past orders found:", pastOrders.length);
+    console.log("Past orders found:", pastOrders.length);
 
     if (!pastOrders.length) {
-      console.log("❌ No past orders found for user");
+      console.log("No past orders found for user");
       return res.json([]); // no history = no recommendations
     }
 
-    // 2️⃣ Flatten all ordered items
+    // Step 2: Flatten all ordered items
     const allItems = pastOrders.flatMap((o) => o.items || []);
-    console.log("🍽 Total ordered items:", allItems.length);
+    console.log("Total ordered items:", allItems.length);
 
-    // 3️⃣ Count item frequency
+    // Step 3: Count item frequency
     const frequency = {};
     allItems.forEach((item) => {
       const key = item.name.toLowerCase();
@@ -36,18 +36,18 @@ router.get("/:restaurantId", auth, async (req, res) => {
       .slice(0, 2)
       .map(([name]) => name);
 
-    console.log("🏆 Top ordered items:", topItems);
+    console.log("Top ordered items:", topItems);
 
-    // 4️⃣ Get restaurant's menu
+    // Step 4: Get restaurant's menu
     const restaurant = await Restaurant.findById(restaurantId).lean();
-    console.log("🍴 Restaurant menu items:", restaurant?.menu?.length || 0);
+    console.log("Restaurant menu items:", restaurant?.menu?.length || 0);
 
     if (!restaurant?.menu) {
-      console.log("❌ No menu found for restaurant");
+      console.log("No menu found for restaurant");
       return res.json([]);
     }
 
-    // 5️⃣ Match by category / price / name similarity
+    // Step 5: Match by category / price / name similarity
     const recommendations = restaurant.menu.filter((menuItem) => {
       // Match by category similarity if present
       if (menuItem.category) {
@@ -88,9 +88,9 @@ router.get("/:restaurantId", auth, async (req, res) => {
       );
     });
 
-    console.log("✨ Initial recommendations:", recommendations.length);
+    console.log("Initial recommendations:", recommendations.length);
 
-    // 6️⃣ Exclude recently ordered items
+    // Step 6: Exclude recently ordered items
     const recentOrderItems = pastOrders
       .slice(0, 3)
       .flatMap((o) => o.items || [])
@@ -100,12 +100,12 @@ router.get("/:restaurantId", auth, async (req, res) => {
       (r) => !recentOrderItems.includes(r.name.toLowerCase())
     );
 
-    console.log("🎯 Final filtered recommendations:", filtered.length);
+    console.log("Final filtered recommendations:", filtered.length);
 
-    // 7️⃣ Return only the found recommendations — no random fallback
-    res.json(filtered.slice(0, 3));
+    // Step 7: Return only the found recommendations
+    res.json(filtered);
   } catch (err) {
-    console.error("❌ Recommendation error:", err);
+    console.error("Recommendation error:", err);
     res.status(500).json({ error: "Failed to load recommendations" });
   }
 });

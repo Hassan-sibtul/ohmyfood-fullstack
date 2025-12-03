@@ -6,10 +6,11 @@ const Order = require("../models/Order");
 const User = require("../models/User");
 const auth = require("../middleware/auth");
 
-// ✅ Create a new order after successful payment
+// Create a new order after successful payment
 router.post("/", auth, async (req, res) => {
   try {
-    const { items, totalAmount, address, restaurantId, specialInstructions } = req.body;
+    const { items, totalAmount, address, restaurantId, specialInstructions } =
+      req.body;
 
     if (!items || !totalAmount || !address) {
       return res
@@ -19,7 +20,7 @@ router.post("/", auth, async (req, res) => {
 
     // Debug log (only in dev)
     if (process.env.NODE_ENV !== "production") {
-      console.log("📥 POST /api/orders payload:", {
+      console.log("POST /api/orders payload:", {
         restaurantId,
         itemsSample: items && items.length ? items[0] : null,
         totalAmount,
@@ -38,7 +39,7 @@ router.post("/", auth, async (req, res) => {
       ? new mongoose.Types.ObjectId(derivedRestaurantId)
       : null;
 
-    // ✅ Create new order document
+    // Create new order document
     const newOrder = new Order({
       user: new mongoose.Types.ObjectId(req.user.id),
       restaurant: restaurantObjectId,
@@ -56,29 +57,29 @@ router.post("/", auth, async (req, res) => {
 
     await newOrder.save();
 
-    // ✅ Add loyalty points: 1 point per £1 spent
+    // Add loyalty points: 1 point per £1 spent
     try {
       await User.findByIdAndUpdate(req.user.id, {
         $inc: { loyaltyPoints: Math.floor(totalAmount) },
       });
     } catch (err) {
-      console.warn("⚠️ Failed to update loyalty points:", err.message);
+      console.warn("Failed to update loyalty points:", err.message);
     }
 
-    // ✅ Populate before returning
+    // Populate before returning
     const populatedOrder = await Order.findById(newOrder._id)
       .populate("user", "name email")
       .populate("restaurant", "name");
 
-    console.log("✅ Order saved:", populatedOrder);
+    console.log("Order saved:", populatedOrder);
     res.status(201).json(populatedOrder);
   } catch (err) {
-    console.error("❌ Error creating order:", err);
+    console.error("Error creating order:", err);
     res.status(500).json({ error: "Failed to create order" });
   }
 });
 
-// ✅ Get all orders of the logged-in user (Customer)
+// Get all orders of the logged-in user (Customer)
 router.get("/my-orders", auth, async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user.id })
@@ -88,12 +89,12 @@ router.get("/my-orders", auth, async (req, res) => {
 
     res.json(orders);
   } catch (err) {
-    console.error("❌ Error fetching user orders:", err);
+    console.error("Error fetching user orders:", err);
     res.status(500).json({ error: "Failed to fetch orders" });
   }
 });
 
-// ✅ Admin: Get ALL customer orders
+// Admin: Get ALL customer orders
 router.get("/", auth, async (req, res) => {
   try {
     if (!req.user.isAdmin) {
@@ -108,12 +109,12 @@ router.get("/", auth, async (req, res) => {
 
     res.json(orders);
   } catch (err) {
-    console.error("❌ Error fetching all orders:", err);
+    console.error("Error fetching all orders:", err);
     res.status(500).json({ error: "Failed to fetch orders" });
   }
 });
 
-// ✅ Admin: Update order status
+// Admin: Update order status
 router.put("/:id/status", auth, async (req, res) => {
   try {
     if (!req.user.isAdmin) {
@@ -143,7 +144,7 @@ router.put("/:id/status", auth, async (req, res) => {
 
     res.json(order);
   } catch (err) {
-    console.error("❌ Error updating order status:", err);
+    console.error("Error updating order status:", err);
     res.status(500).json({ error: "Failed to update order status" });
   }
 });

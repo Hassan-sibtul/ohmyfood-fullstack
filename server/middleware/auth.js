@@ -18,11 +18,11 @@ module.exports = function (req, res, next) {
     };
 
     // Debugging (optional, you can remove later)
-    console.log("✅ Authenticated user:", req.user);
+    console.log("Authenticated user:", req.user);
 
     next();
   } catch (err) {
-    console.error("❌ Invalid token:", err.message);
+    console.error("Invalid token:", err.message);
     return res.status(401).json({ message: "Invalid token" });
   }
 };

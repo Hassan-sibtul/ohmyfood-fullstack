@@ -10,18 +10,18 @@ const auth = require("../middleware/auth");
  */
 router.get("/profile", auth, async (req, res) => {
   try {
-    console.log("📍 GET /api/users/profile - User ID:", req.user?.id);
+    console.log("GET /api/users/profile - User ID:", req.user?.id);
 
     const user = await User.findById(req.user.id).select("-password");
     if (!user) {
-      console.warn("❌ User not found:", req.user.id);
+      console.warn("User not found:", req.user.id);
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("✅ Profile loaded for:", user.email);
+    console.log("Profile loaded for:", user.email);
     res.json(user);
   } catch (err) {
-    console.error("❌ Error fetching profile:", err.message);
+    console.error("Error fetching profile:", err.message);
     res.status(500).json({ error: "Failed to fetch user profile" });
   }
 });
@@ -35,7 +35,7 @@ router.put("/profile", auth, async (req, res) => {
   try {
     const { address, billingDetails, name, email } = req.body;
 
-    console.log("📝 Updating profile with:", {
+    console.log("Updating profile with:", {
       name,
       email,
       address,
@@ -44,18 +44,18 @@ router.put("/profile", auth, async (req, res) => {
 
     const user = await User.findById(req.user.id);
     if (!user) {
-      console.warn("❌ User not found:", req.user.id);
+      console.warn("User not found:", req.user.id);
       return res.status(404).json({ message: "User not found" });
     }
 
-    // ✅ Update only the fields provided
+    // Update only the fields provided
     if (name) user.name = name;
     if (email) user.email = email;
     if (address) user.address = address;
     if (billingDetails) user.billingDetails = billingDetails;
 
     await user.save();
-    console.log("✅ Profile updated successfully:", user._id);
+    console.log("Profile updated successfully:", user._id);
 
     res.json({
       message: "Profile updated successfully",
@@ -68,7 +68,7 @@ router.put("/profile", auth, async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("❌ Error updating profile:", err.message);
+    console.error("Error updating profile:", err.message);
     res.status(500).json({ error: "Failed to update user profile" });
   }
 });
@@ -88,7 +88,7 @@ router.get("/loyalty", auth, async (req, res) => {
       loyaltyPoints: user.loyaltyPoints,
     });
   } catch (err) {
-    console.error("❌ Error fetching loyalty points:", err.message);
+    console.error("Error fetching loyalty points:", err.message);
     res.status(500).json({ error: "Failed to fetch loyalty points" });
   }
 });
@@ -113,14 +113,14 @@ router.put("/redeem", auth, async (req, res) => {
     user.loyaltyPoints -= pointsToRedeem;
     await user.save();
 
-    console.log(`💎 Redeemed ${pointsToRedeem} points from user ${user.email}`);
+    console.log(`Redeemed ${pointsToRedeem} points from user ${user.email}`);
 
     res.json({
       message: `Redeemed ${pointsToRedeem} points.`,
       remainingPoints: user.loyaltyPoints,
     });
   } catch (err) {
-    console.error("❌ Error redeeming points:", err.message);
+    console.error("Error redeeming points:", err.message);
     res.status(500).json({ error: "Failed to redeem points" });
   }
 });

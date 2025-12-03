@@ -14,7 +14,7 @@ if (process.env.SENDGRID_API_KEY) {
 // Email sending function
 async function sendEmail({ to, subject, html, text }) {
   if (!process.env.SENDGRID_API_KEY) {
-    console.log("📧 [DEV] Email send simulated:", { to, subject, text, html });
+    console.log("[DEV] Email send simulated:", { to, subject, text, html });
     return { messageId: "dev-simulated" };
   }
 
@@ -28,15 +28,15 @@ async function sendEmail({ to, subject, html, text }) {
 
   try {
     await sgMail.send(msg);
-    console.log("✅ Email sent successfully to:", to);
+    console.log("Email sent successfully to:", to);
     return { messageId: "sent" };
   } catch (error) {
-    console.error("❌ SendGrid error:", error.response?.body || error);
+    console.error("SendGrid error:", error.response?.body || error);
     throw error;
   }
 }
 
-// ✅ Register new user
+// Register new user
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -68,7 +68,7 @@ router.post("/register", async (req, res) => {
       }
     );
 
-    // ✅ Return both token and user
+    // Return both token and user
     res.status(201).json({
       token,
       user: {
@@ -80,12 +80,12 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("❌ Register error:", err);
+    console.error("Register error:", err);
     res.status(500).json({ message: "Server error during registration" });
   }
 });
 
-// ✅ Login existing user
+// Login existing user
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -120,12 +120,12 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("❌ Login error:", err);
+    console.error("Login error:", err);
     res.status(500).json({ message: "Server error during login" });
   }
 });
 
-// ✅ Forgot Password - request reset link
+// Forgot Password - request reset link
 router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
@@ -168,12 +168,12 @@ router.post("/forgot-password", async (req, res) => {
 
     res.json(genericMsg);
   } catch (err) {
-    console.error("❌ Forgot-password error:", err);
+    console.error("Forgot-password error:", err);
     res.status(500).json({ message: "Failed to process password reset" });
   }
 });
 
-// ✅ Reset Password - set new password using token
+// Reset Password - set new password using token
 router.post("/reset-password", async (req, res) => {
   try {
     const { token, password } = req.body;
@@ -203,7 +203,7 @@ router.post("/reset-password", async (req, res) => {
 
     res.json({ message: "Password has been reset successfully" });
   } catch (err) {
-    console.error("❌ Reset-password error:", err);
+    console.error("Reset-password error:", err);
     res.status(500).json({ message: "Failed to reset password" });
   }
 });

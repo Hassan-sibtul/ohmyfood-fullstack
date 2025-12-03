@@ -15,24 +15,24 @@ export default function Restaurant() {
   const [expandedReviews, setExpandedReviews] = useState({});
   const { addToCart } = useContext(CartContext);
 
-  // ✅ Fetch restaurant details
+  // Fetch restaurant details
   useEffect(() => {
     API.get(`/api/restaurants/${id}`)
       .then((r) => setRest(r.data))
       .catch(console.error);
   }, [id]);
 
-  // ✅ Fetch reviews and ratings for this restaurant
+  // Fetch reviews and ratings for this restaurant
   useEffect(() => {
     if (!id) return;
     API.get(`/api/reviews/restaurant/${id}`)
       .then((res) => {
         setDishRatings(res.data.dishStats || {});
       })
-      .catch((err) => console.error("❌ Error fetching reviews:", err));
+      .catch((err) => console.error("Error fetching reviews:", err));
   }, [id]);
 
-  // ✅ Fetch recommendations
+  // Fetch recommendations
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!id || !token) return;
@@ -42,11 +42,11 @@ export default function Restaurant() {
     })
       .then((res) => setRecommended(res.data || []))
       .catch((err) =>
-        console.error("❌ Error fetching recommendations:", err.message)
+        console.error("Error fetching recommendations:", err.message)
       );
   }, [id]);
 
-  // ✅ Fetch user's past orders to show "Order Again" labels
+  // Fetch user's past orders to show "Order Again" labels
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -59,19 +59,19 @@ export default function Restaurant() {
         const names = allItems.map((i) => i.name.trim().toLowerCase());
         setPreviouslyOrdered([...new Set(names)]); // unique names
       })
-      .catch((err) => console.error("❌ Failed to load user orders:", err));
+      .catch((err) => console.error("Failed to load user orders:", err));
   }, []);
 
-  // ✅ Add item to cart
+  // Add item to cart
   function handleAdd(item) {
     addToCart({ ...item, restaurantId: rest._id });
-    setToast(`${item.name} added to cart ✅`);
+    setToast(`${item.name} added to cart`);
     setTimeout(() => setToast(null), 2000);
   }
 
   if (!rest) return <div>Loading...</div>;
 
-  // ✅ Helpers
+  // Helpers
   const isRecommended = (item) =>
     recommended.some(
       (r) => r.name.trim().toLowerCase() === item.name.trim().toLowerCase()
@@ -114,7 +114,7 @@ export default function Restaurant() {
         </div>
       </div>
 
-      {/* ✅ Menu Grid */}
+      {/* Menu Grid */}
       <div
         className="menu-grid"
         style={{
@@ -138,7 +138,7 @@ export default function Restaurant() {
               transition: "transform 0.2s ease",
             }}
           >
-            {/* ✅ Badge container (top-right) */}
+            {/* Badge container (top-right) */}
             <div
               style={{
                 position: "absolute",
@@ -161,7 +161,7 @@ export default function Restaurant() {
                     borderRadius: "6px",
                   }}
                 >
-                  ⭐ Recommended
+                  Recommended
                 </span>
               )}
 
@@ -183,7 +183,7 @@ export default function Restaurant() {
 
             <h4 style={{ marginBottom: "6px" }}>{m.name}</h4>
 
-            {/* ✅ Display rating if available */}
+            {/* Display rating if available */}
             {dishRatings[m.name] && (
               <>
                 <div

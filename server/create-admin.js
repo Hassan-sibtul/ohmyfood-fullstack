@@ -29,7 +29,7 @@ async function createAdmin() {
     });
 
     await admin.save();
-    console.log("✅ Admin user created successfully!");
+    console.log("Admin user created successfully!");
     console.log("Email: admin@ohmyfood.com");
     console.log("Password: Admin123!@#");
     console.log("Please change the password after first login!");

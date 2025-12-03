@@ -9,11 +9,11 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation(); // 👈 detect route changes
+  const location = useLocation(); // Detect route changes
 
   const token = localStorage.getItem("token");
 
-  // ✅ Decode JWT to check if admin
+  // Decode JWT to check if admin
   let isAdmin = false;
   if (token) {
     try {
@@ -24,13 +24,13 @@ export default function Navbar() {
     }
   }
 
-  // ✅ Load user initially and update on route changes
+  // Load user initially and update on route changes
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user") || "null");
     setUser(savedUser);
   }, [location]);
 
-  // ✅ Also update user when localStorage changes (e.g., login/logout)
+  // Also update user when localStorage changes (e.g., login/logout)
   useEffect(() => {
     const handleStorageChange = () => {
       const updatedUser = JSON.parse(localStorage.getItem("user") || "null");
@@ -40,7 +40,7 @@ export default function Navbar() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // ✅ Close dropdown when clicking outside
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -73,7 +73,7 @@ export default function Navbar() {
         borderBottom: "1px solid #eee",
       }}
     >
-      {/* ✅ Logo */}
+      {/* Logo */}
       <div className="navbar-left">
         <Link to="/" className="logo-link">
           <img
@@ -85,12 +85,12 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* ✅ Right Section */}
+      {/* Right Section */}
       <div
         className="navbar-right"
         style={{ display: "flex", alignItems: "center", gap: "20px" }}
       >
-        {/* 🛒 Cart icon */}
+        {/* Cart icon */}
         <Link to="/cart" className="cart-icon" style={{ position: "relative" }}>
           🛒
           {cartCount > 0 && (
@@ -117,7 +117,7 @@ export default function Navbar() {
           )}
         </Link>
 
-        {/* 👤 User dropdown */}
+        {/* User dropdown */}
         {user ? (
           <div
             ref={dropdownRef}
@@ -174,7 +174,7 @@ export default function Navbar() {
                   {user.name}
                 </div>
 
-                {/* 👤 View Profile */}
+                {/* View Profile */}
                 <Link
                   to="/account"
                   onClick={() => setDropdownOpen(false)}
@@ -188,7 +188,7 @@ export default function Navbar() {
                   View Profile
                 </Link>
 
-                {/* 🧾 My Orders */}
+                {/* My Orders */}
                 <Link
                   to="/profile"
                   onClick={() => setDropdownOpen(false)}
@@ -202,7 +202,7 @@ export default function Navbar() {
                   My Orders
                 </Link>
 
-                {/* 🛠️ Admin Dashboard */}
+                {/* Admin Dashboard */}
                 {isAdmin && (
                   <Link
                     to="/admin/orders"
@@ -218,7 +218,7 @@ export default function Navbar() {
                   </Link>
                 )}
 
-                {/* 🚪 Logout */}
+                {/* Logout */}
                 <button
                   onClick={handleLogout}
                   style={{

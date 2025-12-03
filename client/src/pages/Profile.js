@@ -23,7 +23,7 @@ const statusBg = (status) => {
   }
 };
 
-// Status-specific emoji for toast
+// Status-specific prefix for display
 const statusEmoji = (status) => {
   switch (status) {
     case "Paid":
@@ -148,7 +148,7 @@ export default function Profile() {
       await API.post("/api/reviews", reviewData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setToastMessage("✅ Review submitted successfully!");
+      setToastMessage("Review submitted successfully!");
       setToastVisible(true);
     } catch (err) {
       console.error("Failed to submit review:", err);
@@ -468,7 +468,7 @@ export default function Profile() {
                                 cursor: "pointer",
                               }}
                             >
-                              ⭐ Rate
+                              Rate
                             </button>
                           </li>
                         ))}
