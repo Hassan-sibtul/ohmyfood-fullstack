@@ -6,89 +6,89 @@ const Order = require("../models/Order");
 const User = require("../models/User");
 const auth = require("../middleware/auth");
 
-// Create a new order after successful payment
+/**
+ * @description Create one or more orders from a single cart payload.
+ * The payload can contain items from multiple restaurants.
+ * This endpoint will automatically split them into separate orders.
+ */
 router.post("/", auth, async (req, res) => {
   try {
-    const { items, totalAmount, address, restaurantId, specialInstructions } =
-      req.body;
-
-    console.log("--- START of POST /api/orders ---");
-
-    if (!items || !totalAmount || !address) {
-      console.error("Validation failed: Missing items, totalAmount, or address.");
-      return res
-        .status(400)
-        .json({ error: "Items, totalAmount, and address are required." });
-    }
+    const { items, address, specialInstructions } = req.body;
 
     if (!req.user || !req.user.id) {
-        console.error("CRITICAL: User not authenticated correctly, req.user.id is missing even after auth middleware.");
-        return res.status(401).json({ error: "User authentication failed." });
+      return res.status(401).json({ error: "User authentication failed." });
+    }
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: "Cart items are required." });
+    }
+    if (!address) {
+      return res.status(400).json({ error: "Delivery address is required." });
     }
 
-    // --- Enhanced Debugging ---
-    console.log("User ID from token:", req.user.id);
-    console.log("Is user ID a string?", typeof req.user.id === 'string');
+    // --- Group items by restaurantId ---
+    const ordersByRestaurant = items.reduce((acc, item) => {
+      const restaurantId = item.restaurantId || item.restaurant;
+      if (!restaurantId) return acc;
 
-    const derivedRestaurantId =
-      restaurantId ||
-      items?.[0]?.restaurantId ||
-      items?.[0]?.restaurant?._id ||
-      items?.[0]?.restaurant ||
-      null;
+      if (!acc[restaurantId]) {
+        acc[restaurantId] = {
+          items: [],
+          totalAmount: 0,
+        };
+      }
+      acc[restaurantId].items.push(item);
+      acc[restaurantId].totalAmount += item.price * item.quantity;
+      return acc;
+    }, {});
 
-    const orderData = {
-      user: req.user.id,
-      restaurant: derivedRestaurantId ? new mongoose.Types.ObjectId(derivedRestaurantId) : null,
-      items,
-      totalAmount,
-      address,
-      status: "Paid",
-      specialInstructions: specialInstructions || "",
-    };
+    const createdOrders = [];
+    const orderPromises = [];
 
-    console.log("Order data BEFORE creating model instance:", orderData);
-    // --- End Enhanced Debugging ---
+    // --- Create a separate order for each restaurant ---
+    for (const restaurantId in ordersByRestaurant) {
+      const orderData = ordersByRestaurant[restaurantId];
 
-    const newOrder = new Order(orderData);
-    
-    console.log("Mongoose model instance BEFORE save:", newOrder);
-
-    // Using a try-catch specifically for the save operation
-    let savedOrder;
-    try {
-        savedOrder = await newOrder.save();
-        console.log("Document AFTER save (pre-population):", savedOrder);
-    } catch (saveError) {
-        console.error("!!! ERROR during newOrder.save() !!!", saveError);
-        if (saveError.name === 'ValidationError') {
-            console.error("Validation Errors:", saveError.errors);
-        }
-        return res.status(500).json({ error: "Failed to save the order.", details: saveError.message });
-    }
-
-    // Add loyalty points
-    try {
-      await User.findByIdAndUpdate(req.user.id, {
-        $inc: { loyaltyPoints: Math.floor(totalAmount) },
+      const newOrder = new Order({
+        user: req.user.id,
+        restaurant: new mongoose.Types.ObjectId(restaurantId),
+        items: orderData.items,
+        totalAmount: orderData.totalAmount,
+        address: address,
+        status: "Paid",
+        specialInstructions: specialInstructions || "",
       });
-    } catch (err) {
-      console.warn("Could not update loyalty points:", err.message);
+
+      orderPromises.push(newOrder.save());
     }
 
-    const populatedOrder = await Order.findById(savedOrder._id)
-      .populate("user", "name email")
-      .populate("restaurant", "name");
+    // --- Wait for all orders to be saved ---
+    const savedOrders = await Promise.all(orderPromises);
 
-    console.log("Final populated order to be sent to client:", populatedOrder);
-    console.log("--- END of POST /api/orders ---");
+    // --- Populate user and restaurant details for the response ---
+    for (const order of savedOrders) {
+        const populatedOrder = await Order.findById(order._id)
+            .populate("user", "name email")
+            .populate("restaurant", "name");
+        createdOrders.push(populatedOrder);
+    }
 
-    res.status(201).json(populatedOrder);
+    // --- Update user's loyalty points based on the grand total ---
+    const grandTotal = savedOrders.reduce((total, order) => total + order.totalAmount, 0);
+    if (grandTotal > 0) {
+        await User.findByIdAndUpdate(req.user.id, {
+            $inc: { loyaltyPoints: Math.floor(grandTotal) },
+        });
+    }
+
+    console.log(`${createdOrders.length} orders created from a single cart.`);
+    res.status(201).json(createdOrders); // Return an array of the created orders
+
   } catch (err) {
-    console.error("!!! Uncaught error in POST /api/orders handler !!!", err);
-    res.status(500).json({ error: "An unexpected error occurred while creating the order." });
+    console.error("Error creating split orders:", err);
+    res.status(500).json({ error: "Failed to create one or more orders." });
   }
 });
+
 
 // Get all orders of the logged-in user (Customer)
 router.get("/my-orders", auth, async (req, res) => {
@@ -97,7 +97,6 @@ router.get("/my-orders", auth, async (req, res) => {
       .populate("restaurant", "name")
       .sort({ createdAt: -1 })
       .select("-__v");
-
     res.json(orders);
   } catch (err) {
     console.error("Error fetching user orders:", err);
@@ -111,13 +110,11 @@ router.get("/", auth, async (req, res) => {
     if (!req.user.isAdmin) {
       return res.status(403).json({ message: "Admins only" });
     }
-
     const orders = await Order.find({})
       .populate("user", "name email loyaltyPoints")
       .populate("restaurant", "name")
       .sort({ createdAt: -1 })
       .select("-__v");
-
     res.json(orders);
   } catch (err) {
     console.error("Error fetching all orders:", err);
@@ -131,17 +128,10 @@ router.put("/:id/status", auth, async (req, res) => {
     if (!req.user.isAdmin) {
       return res.status(403).json({ message: "Admins only" });
     }
-
-    const validStatuses = [
-      "Paid",
-      "Preparing",
-      "Out for Delivery",
-      "Delivered",
-    ];
+    const validStatuses = ["Paid", "Preparing", "Out for Delivery", "Delivered"];
     if (!validStatuses.includes(req.body.status)) {
       return res.status(400).json({ message: "Invalid status value" });
     }
-
     const order = await Order.findByIdAndUpdate(
       req.params.id,
       { status: req.body.status },
@@ -150,9 +140,7 @@ router.put("/:id/status", auth, async (req, res) => {
       .populate("user", "name email")
       .populate("restaurant", "name")
       .select("-__v");
-
     if (!order) return res.status(404).json({ message: "Order not found" });
-
     res.json(order);
   } catch (err) {
     console.error("Error updating order status:", err);
