@@ -40,10 +40,15 @@ router.post("/", auth, async (req, res) => {
         rating,
         comment: comment || "",
       },
-      { upsert: true, new: true }
+      {
+        upsert: true,
+        new: true,
+        setDefaultsOnInsert: true,
+        runValidators: true,
+      }
     );
 
-    res.status(201).json(savedReview);
+    res.status(201).json(review);
   } catch (err) {
     console.error("Error submitting review:", err);
     res.status(500).json({ error: "Failed to submit review" });
@@ -53,7 +58,7 @@ router.post("/", auth, async (req, res) => {
 // Get all reviews for a restaurant (with dish-level aggregation)
 router.get("/restaurant/:id", async (req, res) => {
   try {
-    const { restaurantId } = req.params;
+    const { id: restaurantId } = req.params;
 
     const reviews = await Review.find({ restaurant: restaurantId })
       .populate("user", "name email")
