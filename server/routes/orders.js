@@ -18,16 +18,12 @@ router.post("/", auth, async (req, res) => {
         .json({ error: "Items, totalAmount, and address are required." });
     }
 
-    // Debug log (only in dev)
-    if (process.env.NODE_ENV !== "production") {
-      console.log("POST /api/orders payload:", {
-        restaurantId,
-        itemsSample: items && items.length ? items[0] : null,
-        totalAmount,
-      });
+    // 🔥 FIX: Directly use req.user.id. Mongoose will cast it to an ObjectId.
+    if (!req.user || !req.user.id) {
+        console.error("User not authenticated correctly, req.user.id is missing.");
+        return res.status(401).json({ error: "User authentication failed." });
     }
 
-    // Derive restaurantId from payload or first item
     const derivedRestaurantId =
       restaurantId ||
       items?.[0]?.restaurantId ||
@@ -41,7 +37,7 @@ router.post("/", auth, async (req, res) => {
 
     // Create new order document
     const newOrder = new Order({
-      user: new mongoose.Types.ObjectId(req.user.id),
+      user: req.user.id, // <-- THIS IS THE CORRECTED LINE
       restaurant: restaurantObjectId,
       items,
       totalAmount,
@@ -57,7 +53,7 @@ router.post("/", auth, async (req, res) => {
 
     await newOrder.save();
 
-    // Add loyalty points: 1 point per £1 spent
+    // Add loyalty points
     try {
       await User.findByIdAndUpdate(req.user.id, {
         $inc: { loyaltyPoints: Math.floor(totalAmount) },
