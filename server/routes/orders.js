@@ -12,17 +12,23 @@ router.post("/", auth, async (req, res) => {
     const { items, totalAmount, address, restaurantId, specialInstructions } =
       req.body;
 
+    console.log("--- START of POST /api/orders ---");
+
     if (!items || !totalAmount || !address) {
+      console.error("Validation failed: Missing items, totalAmount, or address.");
       return res
         .status(400)
         .json({ error: "Items, totalAmount, and address are required." });
     }
 
-    // 🔥 FIX: Directly use req.user.id. Mongoose will cast it to an ObjectId.
     if (!req.user || !req.user.id) {
-        console.error("User not authenticated correctly, req.user.id is missing.");
+        console.error("CRITICAL: User not authenticated correctly, req.user.id is missing even after auth middleware.");
         return res.status(401).json({ error: "User authentication failed." });
     }
+
+    // --- Enhanced Debugging ---
+    console.log("User ID from token:", req.user.id);
+    console.log("Is user ID a string?", typeof req.user.id === 'string');
 
     const derivedRestaurantId =
       restaurantId ||
@@ -31,27 +37,35 @@ router.post("/", auth, async (req, res) => {
       items?.[0]?.restaurant ||
       null;
 
-    const restaurantObjectId = derivedRestaurantId
-      ? new mongoose.Types.ObjectId(derivedRestaurantId)
-      : null;
-
-    // Create new order document
-    const newOrder = new Order({
-      user: req.user.id, // <-- THIS IS THE CORRECTED LINE
-      restaurant: restaurantObjectId,
+    const orderData = {
+      user: req.user.id,
+      restaurant: derivedRestaurantId ? new mongoose.Types.ObjectId(derivedRestaurantId) : null,
       items,
       totalAmount,
-      address: {
-        street: address.street,
-        postcode: address.postcode,
-        county: address.county,
-        country: address.country,
-      },
+      address,
       status: "Paid",
       specialInstructions: specialInstructions || "",
-    });
+    };
 
-    await newOrder.save();
+    console.log("Order data BEFORE creating model instance:", orderData);
+    // --- End Enhanced Debugging ---
+
+    const newOrder = new Order(orderData);
+    
+    console.log("Mongoose model instance BEFORE save:", newOrder);
+
+    // Using a try-catch specifically for the save operation
+    let savedOrder;
+    try {
+        savedOrder = await newOrder.save();
+        console.log("Document AFTER save (pre-population):", savedOrder);
+    } catch (saveError) {
+        console.error("!!! ERROR during newOrder.save() !!!", saveError);
+        if (saveError.name === 'ValidationError') {
+            console.error("Validation Errors:", saveError.errors);
+        }
+        return res.status(500).json({ error: "Failed to save the order.", details: saveError.message });
+    }
 
     // Add loyalty points
     try {
@@ -59,19 +73,20 @@ router.post("/", auth, async (req, res) => {
         $inc: { loyaltyPoints: Math.floor(totalAmount) },
       });
     } catch (err) {
-      console.warn("Failed to update loyalty points:", err.message);
+      console.warn("Could not update loyalty points:", err.message);
     }
 
-    // Populate before returning
-    const populatedOrder = await Order.findById(newOrder._id)
+    const populatedOrder = await Order.findById(savedOrder._id)
       .populate("user", "name email")
       .populate("restaurant", "name");
 
-    console.log("Order saved:", populatedOrder);
+    console.log("Final populated order to be sent to client:", populatedOrder);
+    console.log("--- END of POST /api/orders ---");
+
     res.status(201).json(populatedOrder);
   } catch (err) {
-    console.error("Error creating order:", err);
-    res.status(500).json({ error: "Failed to create order" });
+    console.error("!!! Uncaught error in POST /api/orders handler !!!", err);
+    res.status(500).json({ error: "An unexpected error occurred while creating the order." });
   }
 });
 
