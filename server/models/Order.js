@@ -7,38 +7,59 @@ const orderSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+
   restaurant: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Restaurant", // 👈 reference Restaurant model
-    required: false, // optional: set to true if every order must have a restaurant
+    ref: "Restaurant",
+    required: false,
   },
+
   items: [
     {
-      name: String,
-      price: Number,
-      qty: Number,
+      menu: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Menu",
+        required: false,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        default: 1,
+      },
     },
   ],
+
   totalAmount: {
     type: Number,
     required: true,
   },
+
   address: {
     street: { type: String, required: true },
     postcode: { type: String, required: true },
     county: { type: String, required: true },
     country: { type: String, required: true },
   },
+
   status: {
     type: String,
     default: "Paid",
   },
-  // Optional: customer-provided notes for the order
+
   specialInstructions: {
     type: String,
     default: "",
     trim: true,
   },
+
   createdAt: {
     type: Date,
     default: Date.now,

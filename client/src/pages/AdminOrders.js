@@ -9,9 +9,9 @@ export default function AdminOrders() {
     mostOrderedDish: null,
     topCustomer: null,
   });
-  const [expanded, setExpanded] = useState({}); // id -> boolean
+  const [expanded, setExpanded] = useState({});
 
-  // Load all orders (requires admin token)
+  // Load all orders (admin only)
   useEffect(() => {
     API.get("/api/orders", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -25,24 +25,22 @@ export default function AdminOrders() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Calculate analytics from orders
+  // ---------------- ANALYTICS ----------------
   const calculateAnalytics = (ordersList) => {
-    // Total sales
     const totalSales = ordersList.reduce(
       (sum, order) => sum + (order.totalAmount || 0),
       0
     );
 
-    // Most ordered dish
     const dishCount = {};
     ordersList.forEach((order) => {
       order.items.forEach((item) => {
         const { name } = item;
         if (!dishCount[name]) {
-          dishCount[name] = { name, count: 0, totalQty: 0 };
+          dishCount[name] = { name, totalQty: 0 };
         }
-        dishCount[name].count += 1;
-        dishCount[name].totalQty += item.qty || 1;
+        // ✅ FIXED: support quantity + qty
+        dishCount[name].totalQty += item.quantity ?? item.qty ?? 1;
       });
     });
 
@@ -50,7 +48,6 @@ export default function AdminOrders() {
       Object.values(dishCount).sort((a, b) => b.totalQty - a.totalQty)[0] ||
       null;
 
-    // Top customer by loyalty points
     const customerMap = {};
     ordersList.forEach((order) => {
       if (order.user) {
@@ -75,7 +72,7 @@ export default function AdminOrders() {
     setAnalytics({ totalSales, mostOrderedDish, topCustomer });
   };
 
-  // Update order status
+  // ---------------- UPDATE STATUS ----------------
   const updateStatus = async (orderId, newStatus) => {
     try {
       const { data } = await API.put(
@@ -95,7 +92,6 @@ export default function AdminOrders() {
 
   if (loading) return <p>Loading orders...</p>;
 
-  // Separate pending vs completed
   const pendingOrders = orders.filter((o) => o.status !== "Delivered");
   const completedOrders = orders.filter((o) => o.status === "Delivered");
 
@@ -106,36 +102,28 @@ export default function AdminOrders() {
     <div className="order-accordion">
       {ordersList.map((order) => {
         const isOpen = !!expanded[order._id];
-        const total = order.totalAmount ? order.totalAmount.toFixed(2) : "0.00";
+        const total = order.totalAmount?.toFixed(2) || "0.00";
         const created = order.createdAt
           ? new Date(order.createdAt).toLocaleString()
           : "";
+
         return (
           <div key={order._id} className={`order-card ${isOpen ? "open" : ""}`}>
             <button
               className="order-summary"
               onClick={() => toggleExpand(order._id)}
-              aria-expanded={isOpen}
             >
               <span className={`chevron ${isOpen ? "rot" : ""}`}>▸</span>
               <span className="summary-id">#{order._id.slice(-6)}</span>
               <span className="summary-customer">
                 {order.user?.name || "N/A"}
-                <small className="summary-sub">{order.user?.email || ""}</small>
+                <small>{order.user?.email}</small>
               </span>
               <span className="summary-restaurant">
                 {order.restaurant?.name || "Unknown"}
               </span>
               <span className="summary-total">£{total}</span>
-              <span className="summary-status">
-                <span
-                  className={`status ${order.status
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")}`}
-                >
-                  {order.status}
-                </span>
-              </span>
+              <span className="summary-status">{order.status}</span>
               <span className="summary-date">{created}</span>
             </button>
 
@@ -144,21 +132,26 @@ export default function AdminOrders() {
               style={{ maxHeight: isOpen ? 800 : 0 }}
             >
               <div className="detail-grid">
+                {/* ITEMS */}
                 <div className="detail-block">
                   <h4>Items</h4>
                   <ul className="items-list">
                     {order.items.map((item, i) => (
                       <li key={i}>
                         <span className="item-name">{item.name}</span>
-                        <span className="item-qty">× {item.qty}</span>
+                        {/* ✅ FIXED */}
+                        <span className="item-qty">
+                          × {item.quantity ?? item.qty ?? 1}
+                        </span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
+                {/* ADDRESS */}
                 <div className="detail-block">
                   <h4>Address</h4>
-                  <p className="mono">
+                  <p>
                     {order.address?.street}
                     <br />
                     {order.address?.postcode}, {order.address?.county}
@@ -167,17 +160,13 @@ export default function AdminOrders() {
                   </p>
                 </div>
 
+                {/* INSTRUCTIONS */}
                 <div className="detail-block">
                   <h4>Instructions</h4>
-                  {order.specialInstructions ? (
-                    <p style={{ whiteSpace: "pre-wrap" }}>
-                      {order.specialInstructions}
-                    </p>
-                  ) : (
-                    <p className="muted">—</p>
-                  )}
+                  {order.specialInstructions || <span>—</span>}
                 </div>
 
+                {/* STATUS */}
                 <div className="detail-block">
                   <h4>Update Status</h4>
                   <select
@@ -202,109 +191,18 @@ export default function AdminOrders() {
     <div className="admin-orders">
       <h2>Restaurant Orders</h2>
 
-      {/* Analytics Dashboard */}
-      <div
-        className="analytics-dashboard"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-          gap: "20px",
-          marginBottom: "30px",
-        }}
-      >
-        {/* Total Sales */}
-        <div
-          className="stat-card"
-          style={{
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            color: "#fff",
-            padding: "20px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-          }}
-        >
-          <h4 style={{ margin: "0 0 10px 0", fontSize: "0.9em", opacity: 0.9 }}>
-            Total Sales
-          </h4>
-          <p style={{ margin: 0, fontSize: "2em", fontWeight: "bold" }}>
-            £{analytics.totalSales.toFixed(2)}
-          </p>
-        </div>
-
-        {/* Most Ordered Dish */}
-        <div
-          className="stat-card"
-          style={{
-            background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-            color: "#fff",
-            padding: "20px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-          }}
-        >
-          <h4 style={{ margin: "0 0 10px 0", fontSize: "0.9em", opacity: 0.9 }}>
-            Most Ordered Dish
-          </h4>
-          {analytics.mostOrderedDish ? (
-            <>
-              <p style={{ margin: 0, fontSize: "1.3em", fontWeight: "bold" }}>
-                {analytics.mostOrderedDish.name}
-              </p>
-              <p
-                style={{ margin: "5px 0 0 0", fontSize: "0.9em", opacity: 0.9 }}
-              >
-                {analytics.mostOrderedDish.totalQty} orders
-              </p>
-            </>
-          ) : (
-            <p style={{ margin: 0, fontSize: "1em" }}>No data</p>
-          )}
-        </div>
-
-        {/* Top Customer */}
-        <div
-          className="stat-card"
-          style={{
-            background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-            color: "#fff",
-            padding: "20px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-          }}
-        >
-          <h4 style={{ margin: "0 0 10px 0", fontSize: "0.9em", opacity: 0.9 }}>
-            👑 Top Customer
-          </h4>
-          {analytics.topCustomer ? (
-            <>
-              <p style={{ margin: 0, fontSize: "1.3em", fontWeight: "bold" }}>
-                {analytics.topCustomer.name}
-              </p>
-              <p
-                style={{ margin: "5px 0 0 0", fontSize: "0.9em", opacity: 0.9 }}
-              >
-                {analytics.topCustomer.loyaltyPoints} points •{" "}
-                {analytics.topCustomer.orderCount} orders
-              </p>
-            </>
-          ) : (
-            <p style={{ margin: 0, fontSize: "1em" }}>No data</p>
-          )}
-        </div>
-      </div>
-
       <h3>⏳ Pending Orders</h3>
-      {pendingOrders.length === 0 ? (
-        <p>No pending orders.</p>
-      ) : (
+      {pendingOrders.length ? (
         renderAccordion(pendingOrders)
+      ) : (
+        <p>No pending orders.</p>
       )}
 
       <h3>✅ Completed Orders</h3>
-      {completedOrders.length === 0 ? (
-        <p>No delivered orders.</p>
-      ) : (
+      {completedOrders.length ? (
         renderAccordion(completedOrders)
+      ) : (
+        <p>No delivered orders.</p>
       )}
     </div>
   );

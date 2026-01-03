@@ -6,7 +6,7 @@ const auth = require("../middleware/auth");
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Create a payment intent
-router.post("/create-payment-intent", auth, async (req, res) => {
+router.post("/create-payment-intent", async (req, res) => {
   try {
     const { amount } = req.body; // amount in cents
     if (!amount) {
