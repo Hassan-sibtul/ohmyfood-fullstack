@@ -178,13 +178,14 @@ export default function TrackOrder() {
 
         <div style={{ marginBottom: "20px" }}>
           <p style={{ margin: "5px 0" }}>
-            <strong>Order ID:</strong> #{order._id.slice(-6).toUpperCase()}
+            <strong>Order ID:</strong> #
+            {order._id ? order._id.slice(-6).toUpperCase() : "N/A"}
           </p>
           <p style={{ margin: "5px 0" }}>
             <strong>Restaurant:</strong> {order.restaurant?.name || "Unknown"}
           </p>
           <p style={{ margin: "5px 0" }}>
-            <strong>Total:</strong> £{order.totalAmount.toFixed(2)}
+            <strong>Total:</strong> £{(order.totalAmount || 0).toFixed(2)}
           </p>
           <p style={{ margin: "5px 0" }}>
             <strong>Delivery Address:</strong> {order.address?.street},{" "}
@@ -217,10 +218,13 @@ export default function TrackOrder() {
                 }}
               >
                 <span>
-                  {item.name} × {item.qty}
+                  {item.name} × {item.quantity || item.qty || 1}
                 </span>
                 <span style={{ fontWeight: "bold" }}>
-                  £{(item.price * item.qty).toFixed(2)}
+                  £
+                  {(
+                    (item.price || 0) * (item.quantity || item.qty || 1)
+                  ).toFixed(2)}
                 </span>
               </li>
             ))}

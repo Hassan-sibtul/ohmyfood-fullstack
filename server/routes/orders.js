@@ -30,14 +30,33 @@ router.post("/", auth, async (req, res) => {
       const restaurantId = item.restaurantId || item.restaurant;
       if (!restaurantId) return acc;
 
+      // Validate and parse price and quantity
+      const price = parseFloat(item.price);
+      const quantity = parseInt(item.quantity || item.qty) || 1;
+
+      if (isNaN(price) || price < 0) {
+        console.error(`Invalid price for item:`, item);
+        return acc;
+      }
+      if (isNaN(quantity) || quantity < 1) {
+        console.error(`Invalid quantity for item:`, item);
+        return acc;
+      }
+
       if (!acc[restaurantId]) {
         acc[restaurantId] = {
           items: [],
           totalAmount: 0,
         };
       }
-      acc[restaurantId].items.push(item);
-      acc[restaurantId].totalAmount += item.price * item.quantity;
+
+      // Store normalized item data
+      acc[restaurantId].items.push({
+        ...item,
+        price: price,
+        quantity: quantity,
+      });
+      acc[restaurantId].totalAmount += price * quantity;
       return acc;
     }, {});
 
@@ -48,11 +67,22 @@ router.post("/", auth, async (req, res) => {
     for (const restaurantId in ordersByRestaurant) {
       const orderData = ordersByRestaurant[restaurantId];
 
+      // Validate totalAmount before creating order
+      if (isNaN(orderData.totalAmount) || orderData.totalAmount < 0) {
+        console.error(
+          `Invalid totalAmount for restaurant ${restaurantId}:`,
+          orderData.totalAmount
+        );
+        return res.status(400).json({
+          error: `Invalid order total for restaurant. Please check item prices and quantities.`,
+        });
+      }
+
       const newOrder = new Order({
         user: req.user.id,
         restaurant: new mongoose.Types.ObjectId(restaurantId),
         items: orderData.items,
-        totalAmount: orderData.totalAmount,
+        totalAmount: parseFloat(orderData.totalAmount.toFixed(2)),
         address: address,
         status: "Paid",
         specialInstructions: specialInstructions || "",
@@ -66,29 +96,30 @@ router.post("/", auth, async (req, res) => {
 
     // --- Populate user and restaurant details for the response ---
     for (const order of savedOrders) {
-        const populatedOrder = await Order.findById(order._id)
-            .populate("user", "name email")
-            .populate("restaurant", "name");
-        createdOrders.push(populatedOrder);
+      const populatedOrder = await Order.findById(order._id)
+        .populate("user", "name email")
+        .populate("restaurant", "name");
+      createdOrders.push(populatedOrder);
     }
 
     // --- Update user's loyalty points based on the grand total ---
-    const grandTotal = savedOrders.reduce((total, order) => total + order.totalAmount, 0);
+    const grandTotal = savedOrders.reduce(
+      (total, order) => total + order.totalAmount,
+      0
+    );
     if (grandTotal > 0) {
-        await User.findByIdAndUpdate(req.user.id, {
-            $inc: { loyaltyPoints: Math.floor(grandTotal) },
-        });
+      await User.findByIdAndUpdate(req.user.id, {
+        $inc: { loyaltyPoints: Math.floor(grandTotal) },
+      });
     }
 
     console.log(`${createdOrders.length} orders created from a single cart.`);
     res.status(201).json(createdOrders); // Return an array of the created orders
-
   } catch (err) {
     console.error("Error creating split orders:", err);
     res.status(500).json({ error: "Failed to create one or more orders." });
   }
 });
-
 
 // Get all orders of the logged-in user (Customer)
 router.get("/my-orders", auth, async (req, res) => {
@@ -128,7 +159,12 @@ router.put("/:id/status", auth, async (req, res) => {
     if (!req.user.isAdmin) {
       return res.status(403).json({ message: "Admins only" });
     }
-    const validStatuses = ["Paid", "Preparing", "Out for Delivery", "Delivered"];
+    const validStatuses = [
+      "Paid",
+      "Preparing",
+      "Out for Delivery",
+      "Delivered",
+    ];
     if (!validStatuses.includes(req.body.status)) {
       return res.status(400).json({ message: "Invalid status value" });
     }

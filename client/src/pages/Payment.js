@@ -144,19 +144,32 @@ function CheckoutForm({ address, cart, specialInstructions }) {
 
       // Step 4: Create an order for each restaurant
       for (const [restaurantId, items] of Object.entries(groupedByRestaurant)) {
-        const orderTotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+        // Map items to ensure quantity property exists
+        const formattedItems = items.map((item) => ({
+          ...item,
+          quantity: item.quantity || item.qty || 1,
+          price: parseFloat(item.price) || 0,
+        }));
+
+        const orderTotal = formattedItems.reduce(
+          (sum, i) => sum + i.price * i.quantity,
+          0
+        );
         const orderRes = await API.post(
           "/api/orders",
           {
-            restaurantId,
-            items,
-            totalAmount: orderTotal,
+            items: formattedItems,
             address,
             specialInstructions,
           },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        createdOrders.push(orderRes.data);
+        // Server returns an array of orders, so we need to spread it
+        if (Array.isArray(orderRes.data)) {
+          createdOrders.push(...orderRes.data);
+        } else {
+          createdOrders.push(orderRes.data);
+        }
       }
 
       // Step 5: Deduct redeemed points

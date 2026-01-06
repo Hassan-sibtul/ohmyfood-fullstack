@@ -132,7 +132,7 @@ export default function Profile() {
           _id: syntheticId,
           name: item.name,
           price: item.price,
-          qty: item.qty || 1,
+          qty: item.quantity || item.qty || 1,
           restaurantId,
         },
         restaurantId
@@ -274,8 +274,10 @@ export default function Profile() {
                       <ul>
                         {order.items.map((item, i) => (
                           <li key={i}>
-                            {item.name} × {item.qty} — £
-                            {(item.price * item.qty).toFixed(2)}
+                            {item.name} × {item.quantity || item.qty || 1} — £
+                            {(
+                              item.price * (item.quantity || item.qty || 1)
+                            ).toFixed(2)}
                           </li>
                         ))}
                       </ul>
@@ -446,8 +448,10 @@ export default function Profile() {
                             }}
                           >
                             <span>
-                              {item.name} × {item.qty} — £
-                              {(item.price * item.qty).toFixed(2)}
+                              {item.name} × {item.quantity || item.qty || 1} — £
+                              {(
+                                item.price * (item.quantity || item.qty || 1)
+                              ).toFixed(2)}
                             </span>
                             <button
                               onClick={() =>

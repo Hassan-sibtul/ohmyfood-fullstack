@@ -198,8 +198,10 @@ export default function OrderConfirmation() {
                 <ul style={{ marginTop: 6 }}>
                   {(order.items || []).map((it, idx) => (
                     <li key={idx}>
-                      {it.name} × {it.qty} — £
-                      {((it.price || 0) * (it.qty || 0)).toFixed(2)}
+                      {it.name} × {it.quantity || it.qty || 1} — £
+                      {((it.price || 0) * (it.quantity || it.qty || 1)).toFixed(
+                        2
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -221,9 +223,7 @@ export default function OrderConfirmation() {
 
               {/* Track My Order button */}
               <button
-                onClick={() =>
-                  navigate("/track-order", { state: { order } })
-                }
+                onClick={() => navigate("/track-order", { state: { order } })}
                 style={{
                   marginTop: 12,
                   background: "#007bff",
